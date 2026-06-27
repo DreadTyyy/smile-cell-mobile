@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smile_cell/pages/home_screen.dart';
+import 'package:smile_cell/pages/splash_screen.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -20,15 +21,15 @@ class SmileCell extends StatelessWidget {
       navigatorObservers: [routeObserver],
       title: 'Smile Cell',
       theme: ThemeData(
-        textTheme: GoogleFonts.getTextTheme(
-          "Google Sans Flex",
+        textTheme: GoogleFonts.interTextTheme(
           Theme.of(context).textTheme
         ),
       ),
       initialRoute: "/",
       routes: {
         // "/": (context) => SplashScreen(),
-        "/home": (context) => HomeScreen()
+        "/home": (context) => HomeScreen(),
+        "/":(context) => SplashScreen()
       }
     );
   }
