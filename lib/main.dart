@@ -27,9 +27,8 @@ class SmileCell extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        // "/": (context) => SplashScreen(),
-        "/home": (context) => HomeScreen(),
-        "/":(context) => SplashScreen()
+        "/":(context) => SplashScreen(),
+        "/home": (context) => HomeScreen()
       }
     );
   }
