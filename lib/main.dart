@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smile_cell/pages/home_screen.dart';
+import 'package:smile_cell/pages/login_screen.dart';
 import 'package:smile_cell/pages/splash_screen.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -27,9 +28,9 @@ class SmileCell extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        // "/": (context) => SplashScreen(),
+        "/":(context) => SplashScreen(),
         "/home": (context) => HomeScreen(),
-        "/":(context) => SplashScreen()
+        "/login": (context) => LoginScreen()
       }
     );
   }
