@@ -8,9 +8,10 @@
 //tambah gambar bebas di center (72x72)
 //hapus delay agar mengetahui pengambilan data sukses
 
-import 'package:flutter/material.dart';
-import "package:http/http.dart" as http;
-import "package:shared_preferences/shared_preferences.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:smile_cell/data/local/session_helpers.dart";
+import "package:smile_cell/providers/auth_provider.dart";
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,15 +23,16 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _navigate();
   }
 
-  Future<void> _navigate()async{
-    final prefs = await SharedPreferences.getInstance();
-    final user = prefs.getString("user");
-    final token = prefs.getString("api_token");
+  Future<void> _navigate() async {
+    final sessionHelpers = SessionHelpers();
+
+    final token = await sessionHelpers.getSessionData("api_token");
+    final userProfile = await sessionHelpers.getUserProfile();
+
     if (!mounted) return;
 
     if (token == null || token.isEmpty) {
@@ -38,37 +40,21 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    if (user != null && user.isNotEmpty) {
-      Navigator.pushReplacementNamed(context, "/home");
+    if (userProfile == null) {
+      Navigator.pushReplacementNamed(context, "/login");
       return;
     }
 
-    final success = await _fetchUserFromBackend(token);
+    context.read<AuthProvider>().initUser();
+
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, success ? "/home" : "/login");
+    Navigator.pushReplacementNamed(context, "/home");
   }
 
-  Future<bool> _fetchUserFromBackend(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse("https://api.example.com/me"),
-        headers: {"Authorization": "Bearer $token"},
-      );
-      if (response.statusCode == 200) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("user", response.body);
-        return true;
-      }
-      return false;
-    } catch (_) {
-      return false;
-    }
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C93CB),
+      backgroundColor: const Color(0xFF2C93CB),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

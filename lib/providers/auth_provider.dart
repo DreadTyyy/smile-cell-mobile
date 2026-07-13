@@ -7,18 +7,18 @@ class AuthProvider extends ChangeNotifier {
 
   UserProfile? get userProfile => _userProfile;
 
-  void initUser() async {
+  Future<void> initUser() async {
     _userProfile = await SessionHelpers().getUserProfile();
     notifyListeners();
   }
 
-  void setUserProfile(UserProfile user) async {
+  Future<void> setUserProfile(UserProfile user) async {
     _userProfile = user;
     await SessionHelpers().saveUserProfile(user);
     notifyListeners();
   }
 
-  void removeUserProfile() async {
+  Future<void> removeUserProfile() async {
     _userProfile = null;
     await SessionHelpers().removeUserProfile();
     notifyListeners();
