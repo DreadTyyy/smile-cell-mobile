@@ -30,6 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  bool get _canNext =>
+    _phoneNumberController.text.isNotEmpty &&
+    _phoneNumberController.text.length >= 8 &&
+    _phoneNumberController.text.length <=12;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         keyboardType: TextInputType.phone,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(12)
                         ],
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -94,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 54.0,
                 child: ElevatedButton(
-                  onPressed: _phoneNumberController.text.isNotEmpty
+                  onPressed: _canNext
                       ? _goToRegister
                       : null,
                   style: ElevatedButton.styleFrom(

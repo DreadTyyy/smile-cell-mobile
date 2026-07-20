@@ -47,6 +47,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool get _isFormValid =>
       _phoneNumberController.text.isNotEmpty &&
+      _phoneNumberController.text.length >= 8 &&
+      _phoneNumberController.text.length <=12 &&
       _fullNameController.text.isNotEmpty &&
       _cityController.text.isNotEmpty;
 
@@ -116,6 +118,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             keyboardType: TextInputType.phone,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(12)
                             ],
                             decoration: const InputDecoration(
                               border: InputBorder.none,
