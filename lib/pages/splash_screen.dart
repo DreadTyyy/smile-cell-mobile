@@ -8,7 +8,10 @@
 //tambah gambar bebas di center (72x72)
 //hapus delay agar mengetahui pengambilan data sukses
 
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
+import "package:smile_cell/data/local/session_helpers.dart";
+import "package:smile_cell/providers/auth_provider.dart";
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,23 +23,47 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _navigate();
   }
 
-  Future<void> _navigate()async{
-    await Future.delayed(Duration(seconds: 2));
+  Future<void> _navigate() async {
+    final sessionHelpers = SessionHelpers();
+
+    final token = await sessionHelpers.getSessionData("api_token");
+    final userProfile = await sessionHelpers.getUserProfile();
+
+    if (!mounted) return;
+
+    if (token == null || token.isEmpty) {
+      Navigator.pushReplacementNamed(context, "/login");
+      return;
+    }
+
+    if (userProfile == null) {
+      Navigator.pushReplacementNamed(context, "/login");
+      return;
+    }
+
+    context.read<AuthProvider>().initUser();
+
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, "/home");
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2C93CB),
-      body: Container(
-        child: Text("hello world!"),
+      backgroundColor: const Color(0xFF2C93CB),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset("assets/Vector.png", height: 100.0),
+            SizedBox(height: 24),
+            CircularProgressIndicator(color: Colors.white),
+          ],
+        ),
       ),
     );
   }
