@@ -31,14 +31,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool get _canNext =>
-    _phoneNumberController.text.isNotEmpty &&
-    _phoneNumberController.text.length >= 8 &&
-    _phoneNumberController.text.length <=12;
+      _phoneNumberController.text.isNotEmpty &&
+      _phoneNumberController.text.length >= 8 &&
+      _phoneNumberController.text.length <= 12;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Image.asset("assets/Vector.png", height: 40.0),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 24.0),
@@ -82,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         keyboardType: TextInputType.phone,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(12)
+                          LengthLimitingTextInputFormatter(12),
                         ],
                         decoration: const InputDecoration(
                           border: InputBorder.none,
@@ -100,9 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 54.0,
                 child: ElevatedButton(
-                  onPressed: _canNext
-                      ? _goToRegister
-                      : null,
+                  onPressed: _canNext ? _goToRegister : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2C93CB),
                     padding: const EdgeInsets.symmetric(
