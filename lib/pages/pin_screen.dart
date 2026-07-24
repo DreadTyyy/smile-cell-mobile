@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smile_cell/pages/otp_screen.dart';
 import 'package:smile_cell/widgets/keypad/numeric_keypad.dart';
 
 enum PinStep {
@@ -7,7 +8,16 @@ enum PinStep {
 }
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({super.key});
+  final String phoneNumber;
+  final String fullName;
+  final String city;
+
+  const PinScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.fullName,
+    required this.city,
+  });
 
   @override
   State<PinScreen> createState() => _PinScreenState();
@@ -34,7 +44,27 @@ class _PinScreenState extends State<PinScreen> {
     }
 
     if (currentPin == firstPin) {
-      // PIN berhasil dibuat
+      //TODO: Buat akun baru
+
+      //TODO: arahkan ke otp ketika sukses
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+
+            var tween = Tween(
+              begin: begin,
+              end: end,
+            ).chain(CurveTween(curve: curve));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              OtpScreen(phoneNumber: widget.phoneNumber),
+        ),
+      );
     } else {
       setState(() {
         currentPin = "";
