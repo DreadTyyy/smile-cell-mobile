@@ -1,10 +1,7 @@
-// TODO: fungsi menyimpan data ke database (registrasi)
-// TODO: masuk ke otp screen
-// TODO: login -> (failed) -> register -> (success) -> otp [hapus register]
+// TODO: Membuat fungsi untuk mendaftar akun ke database
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:smile_cell/pages/otp_screen.dart";
 import "package:smile_cell/pages/pin_screen.dart";
 
 class RegisterScreen extends StatefulWidget {
@@ -31,6 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
 
+    // Inisialisasi nomor telp dan listener
     _phoneNumberController.text = widget.phoneNumber;
 
     _phoneNumberController.addListener(() {
@@ -60,6 +58,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => _activeFocus = "city");
       }
     });
+ 
+    // Fokus ke nomor telp ketika pertama kali masuk register
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_containerFocusNodePhoneNumber);
+    });
   }
 
   @override
@@ -84,6 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         leading: IconButton(
@@ -153,6 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Expanded(
                           child: TextField(
                             controller: _phoneNumberController,
+                            focusNode: _containerFocusNodePhoneNumber,
                             keyboardType: TextInputType.phone,
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
@@ -280,7 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         decoration: const InputDecoration(
                           border: InputBorder.none,
-                          hintText: "Kota kamu",
+                          hintText: "Contoh: Surakarta",
                           hintStyle: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w500,

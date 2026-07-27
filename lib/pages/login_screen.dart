@@ -1,5 +1,5 @@
-// TODO: masuk ke laman pin screen dan kirim parameter nomor handphone
-// TODO: login -> (failed) -> register | (sucsess) -> homepage [hapus login]
+// TODO: Membuat fungsi untuk mengecek nomor handphone
+// TODO: Jika terdeteksi ada akun? => arahkan ke PIN : arahkan ke Register 
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
