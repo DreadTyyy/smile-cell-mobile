@@ -29,6 +29,12 @@ class SmileCell extends StatelessWidget {
       title: "Smile Cell",
       theme: ThemeData(
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFF2C93CB),
+          primary: Color(0xFF2C93CB),
+          surface: Color(0xFFF5F9FC),
+          error: Color(0xFFDC2626)
+        )
       ),
       initialRoute: "/",
       routes: {

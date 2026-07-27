@@ -14,6 +14,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _phoneNumberController = TextEditingController();
+  final FocusNode _containerFocusNode = FocusNode();
+  bool _isFocused = false;
 
   @override
   void initState() {
@@ -22,11 +24,18 @@ class _LoginScreenState extends State<LoginScreen> {
     _phoneNumberController.addListener(() {
       setState(() {});
     });
+
+    _containerFocusNode.addListener(() {
+      setState(() {
+        _isFocused = _containerFocusNode.hasFocus;
+      });
+    });
   }
 
   @override
   void dispose() {
     _phoneNumberController.dispose();
+    _containerFocusNode.dispose();
     super.dispose();
   }
 
@@ -38,9 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0.0,
         automaticallyImplyLeading: false,
         centerTitle: true,
@@ -52,52 +61,76 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Masuk dengan Nomor HP",
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+              Center(
+                child: Text(
+                  "Masuk dengan Nomor HP",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
 
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 20.0),
 
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 6.0,
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      "+62",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                        fontSize: 16.0,
+              Focus(
+                focusNode: _containerFocusNode,
+                child: GestureDetector(
+                  onTap: () {
+                    _containerFocusNode.requestFocus();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFFFFF),
+                      border: BoxBorder.all(
+                        color: _isFocused ? Color(0xFF2C93CB): Color(0xFFDDDDDD)
                       ),
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: TextField(
-                        controller: _phoneNumberController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(12),
-                        ],
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "123 4567 8900",
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 6.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "+62",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 16.0,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 16.0),
+                        Expanded(
+                          child: TextField(
+                            controller: _phoneNumberController,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(12),
+                            ],
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w500
+                            ),
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "123 4567 8900",
+                              hintStyle: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black54
+                              )
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
 
