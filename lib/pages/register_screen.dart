@@ -25,6 +25,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final FocusNode _containerFocusNodeName = FocusNode();
   final FocusNode _containerFocusNodeCity = FocusNode();
 
+  String _activeFocus = '';
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _cityController.addListener(() {
       setState(() {});
     });
+
+    _containerFocusNodePhoneNumber.addListener(() {
+      if (_containerFocusNodePhoneNumber.hasFocus) {
+        setState(() => _activeFocus = "phonenumber");
+      }
+    });
+
+    _containerFocusNodeName.addListener(() {
+      if (_containerFocusNodeName.hasFocus) {
+        setState(() => _activeFocus = "name");
+      }
+    });
+
+    _containerFocusNodeCity.addListener(() {
+      if (_containerFocusNodeCity.hasFocus) {
+        setState(() => _activeFocus = "city");
+      }
+    });
   }
 
   @override
@@ -47,6 +67,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _phoneNumberController.dispose();
     _fullNameController.dispose();
     _cityController.dispose();
+    _containerFocusNodePhoneNumber.dispose();
+    _containerFocusNodeName.dispose();
+    _containerFocusNodeCity.dispose();
     super.dispose();
   }
 
@@ -100,63 +123,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Color(0xCC000000),
                     ),
                   ),
-                  Focus(
-                    focusNode: _containerFocusNodePhoneNumber,
-                    child: GestureDetector(
-                    onTap: () {
-                       _containerFocusNodePhoneNumber.requestFocus();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFFFF),
-                        border: BoxBorder.all(
-                          color: _containerFocusNodePhoneNumber.hasFocus ? Color(0xFF2C93CB) : Color(0xFFDDDDDD)
-                        ),
-                        borderRadius: BorderRadius.circular(8.0),
+                  GestureDetector(
+                  onTap: () {
+                     _containerFocusNodePhoneNumber.requestFocus();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFFFFF),
+                      border: BoxBorder.all(
+                        color:_activeFocus == "phonenumber" ? Color(0xFF2C93CB) : Color(0xFFDDDDDD)
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 6.0,
-                      ),
-                      child: Row(
-                        children: [
-                          const Text(
-                            "+62",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                              fontSize: 16.0,
-                            ),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 6.0,
+                    ),
+                    child: Row(
+                      children: [
+                        const Text(
+                          "+62",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontSize: 16.0,
                           ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: TextField(
-                              controller: _phoneNumberController,
-                              keyboardType: TextInputType.phone,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(12)
-                              ],
-                              style: TextStyle(
+                        ),
+                        const SizedBox(width: 16.0),
+                        Expanded(
+                          child: TextField(
+                            controller: _phoneNumberController,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(12)
+                            ],
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) {
+                              FocusScope.of(context).requestFocus(_containerFocusNodeName);
+                            },
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "123 4567 8900",
+                              hintStyle: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w500,
-                              ),
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "123 4567 8900",
-                                hintStyle: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54
-                                )
-                              ),
+                                color: Colors.black54
+                              )
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  )
+                                    )
                 ],
               ),
 
@@ -174,40 +198,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Color(0xCC000000),
                     ),
                   ),
-                  Focus(
-                    focusNode: _containerFocusNodeName,
-                    child: GestureDetector(
-                    onTap: () {
-                       _containerFocusNodeName.requestFocus();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFFFFF),
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: _containerFocusNodeName.hasFocus ? Color(0xFF2C93CB) : Color(0xFFDDDDDD))
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 6.0,
-                      ),
-                      child: TextField(
-                        style: TextStyle(
+                  GestureDetector(
+                  onTap: () {
+                     _containerFocusNodeName.requestFocus();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFFFFF),
+                      borderRadius: BorderRadius.circular(8.0),
+                      border: Border.all(
+                        color: _activeFocus == "name" ? Color(0xFF2C93CB) : Color(0xFFDDDDDD))
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 6.0,
+                    ),
+                    child: TextField(
+                      style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      controller: _fullNameController,
+                      focusNode: _containerFocusNodeName,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(_containerFocusNodeCity);
+                      },
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Nama lengkap kamu",
+                        hintStyle: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w500,
-                              ),
-                        controller: _fullNameController,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Nama lengkap kamu",
-                          hintStyle: TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black54)
-                        ),
+                                color: Colors.black54)
                       ),
                     ),
                   ),
-                  )
+                                    )
                 ],
               ),
 
@@ -225,37 +252,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Color(0xCC000000),
                     ),
                   ),
-                  Focus(
-                    focusNode: _containerFocusNodeCity,
-                    
-                    child: GestureDetector(
-                      onTap: () {
-                       _containerFocusNodeCity.requestFocus();
-                    },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFFFFF),
-                          borderRadius: BorderRadius.circular(8.0),
-                          border: Border.all(color: _containerFocusNodeCity.hasFocus ? Color(0xFF2C93CB) : Color(0xFFDDDDDD))
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 6.0,
-                        ),
-                        child: TextField(
-                          style: TextStyle(
+                  GestureDetector(
+                    onTap: () {
+                     _containerFocusNodeCity.requestFocus();
+                  },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFFFFF),
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: Border.all(
+                          color: _activeFocus == "city" ? Color(0xFF2C93CB) : Color(0xFFDDDDDD))
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 6.0,
+                      ),
+                      child: TextField(
+                        style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        controller: _cityController,
+                        focusNode: _containerFocusNodeCity,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) {
+                          _containerFocusNodeCity.unfocus();
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Kota kamu",
+                          hintStyle: TextStyle(
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w500,
-                                ),
-                          controller: _cityController,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Kota kamu",
-                            hintStyle: TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black54)
-                          ),
+                                  color: Colors.black54)
                         ),
                       ),
                     ),
@@ -282,7 +311,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   child: const Text(
-                    "Buat Akun",
+                    "Lanjutkan",
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
