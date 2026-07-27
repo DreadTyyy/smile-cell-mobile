@@ -116,17 +116,17 @@ class _OtpScreenState extends State<OtpScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           Column(
             children: [
               AppBar(
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 elevation: 0.0,
                 leading: IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.arrow_back_rounded),
                 ),
               ),
 
@@ -142,22 +142,28 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Masukkan Kode OTP",
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                        Center(
+                          child: const Text(
+                            "Masukkan Kode OTP",
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
 
                         const SizedBox(height: 8.0),
 
-                        Text(
-                          "Kode verifikasi telah dikirim ke +62 ${widget.phoneNumber}",
-                          style: const TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.black54,
+                        Center(
+                          child: Text(
+                            "Kode verifikasi telah dikirim ke +62 ${widget.phoneNumber}",
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black54,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
 
@@ -173,8 +179,13 @@ class _OtpScreenState extends State<OtpScreen> {
                             forceErrorState: _hasError,
                             onCompleted: (pin) =>
                                 FocusScope.of(context).unfocus(),
-                            defaultPinTheme: defaultPinTheme,
+                            defaultPinTheme: defaultPinTheme.copyDecorationWith(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Color(0xFFDDDDDD))
+                              ),
                             focusedPinTheme: defaultPinTheme.copyDecorationWith(
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(8.0),
                               border: Border.all(
                                 color: const Color(0xFF2C93CB),
@@ -202,6 +213,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                     style: TextStyle(
                                       color: Color(0xFF2C93CB),
                                       fontWeight: FontWeight.w600,
+                                      fontSize: 16.0,
                                     ),
                                   ),
                                 )
@@ -212,7 +224,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                   child: Text(
                                     "Kirim ulang kode dalam $_formattedTime",
                                     style: const TextStyle(
-                                      fontSize: 14.0,
+                                      fontSize: 16.0,
                                       color: Colors.black54,
                                     ),
                                   ),
