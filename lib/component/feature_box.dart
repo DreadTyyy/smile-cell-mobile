@@ -1,13 +1,13 @@
 import "package:flutter/material.dart";
 
 class FeatureBox extends StatelessWidget {
-  final String urlImage;
+  final Widget icon;
   final String title;
   final Function() onTap;
 
   const FeatureBox({
     super.key,
-    required this.urlImage,
+    required this.icon,
     required this.title,
     required this.onTap,
   });
@@ -16,6 +16,7 @@ class FeatureBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: const Color(0xFFFFFFFF),
+      borderRadius: BorderRadius.circular(12.0),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12.0),
@@ -41,7 +42,7 @@ class FeatureBox extends StatelessWidget {
               SizedBox(
                 height: 24.0,
                 width: 57.0,
-                child: Image.asset(urlImage, fit: BoxFit.contain),
+                child: icon
               ),
               Text(title, style: const TextStyle(fontSize: 10.0)),
             ],

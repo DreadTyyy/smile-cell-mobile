@@ -40,6 +40,7 @@ class BillCategory {
   const BillCategory({
     required this.id,
     required this.title,
+    required this.logoAsset,
     required this.billers,
     required this.onBillerSelected,
     this.searchHint = 'Cari penyedia layanan/tagihan'
@@ -47,6 +48,7 @@ class BillCategory {
 
   final String id;
   final String title;
+  final String logoAsset;
   final List<Biller> billers;
   final void Function(BuildContext context, Biller biller) onBillerSelected;
   final String? searchHint;

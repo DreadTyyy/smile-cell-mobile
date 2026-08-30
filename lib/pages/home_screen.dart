@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smile_cell/component/feature_box.dart';
+import 'package:smile_cell/config/bill_config.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -95,19 +97,51 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   FeatureBox(
-                    urlImage: "assets/Vector.png",
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedSmartphoneWifi,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 24.0,
+                    ),
                     title: "Paket Data",
                     onTap: () {},
                   ),
                   SizedBox(width: 16.0),
                   FeatureBox(
-                    urlImage: "assets/Vector.png",
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedHoldPhone,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 24.0,
+                    ),
                     title: "Paket Pulsa",
                     onTap: () {},
                   ),
                 ],
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 20.0),
+              Text(
+                "Tagihan",
+                style: GoogleFonts.getFont(
+                  "Google Sans Flex",
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 12.0),
+              Wrap(
+                spacing: 16.0,
+                runSpacing: 16.0,
+                children: [
+                  for (final category in BillCategories.all)
+                    FeatureBox(
+                      icon: Image.asset(
+                        "assets/${category.logoAsset}",
+                        fit: BoxFit.contain,
+                      ),
+                      title: category.title,
+                      onTap: () => openBillScreen(context, category),
+                    ),
+                ],
+              ),
             ],
           ),
         ),
@@ -182,13 +216,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _buildBalanceAction(
-                    icon: Icons.add_circle_outline,
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedPlusSignSquare,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 24.0,
+                    ),
                     label: "Isi Saldo",
                     onTap: () {},
                   ),
                   SizedBox(width: 20.0),
                   _buildBalanceAction(
-                    icon: Icons.send_outlined,
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedMoneySend02,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 24.0,
+                    ),
                     label: "Kirim Saldo",
                     onTap: () {},
                   ),
@@ -202,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBalanceAction({
-    required IconData icon,
+    required Widget icon,
     required String label,
     required Function() onTap,
   }) {
@@ -212,11 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: Theme.of(context).colorScheme.primary,
-              size: 24.0,
-            ),
+            icon,
             SizedBox(height: 6.0),
             Text(
               label,

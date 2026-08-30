@@ -12,19 +12,19 @@ const _pdamBiller = <Biller>[
   Biller(
     id: 'pdam-bandung', 
     name: 'PDAM Bandung', 
-    logoAsset: 'pdam-logo.png',
+    logoAsset: 'pdam.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
   Biller(
     id: 'pdam-surakarta', 
     name: 'PDAM Surakarta', 
-    logoAsset: 'pdam-logo.png',
+    logoAsset: 'pdam.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
   Biller(
     id: 'pdam-sukoharjo', 
     name: 'PDAM Sukoharjo', 
-    logoAsset: 'pdam-logo.png',
+    logoAsset: 'pdam.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
 ];
@@ -54,19 +54,19 @@ const _bpjsBiller = <Biller>[
   Biller(
     id: 'bpjs-kesehatan', 
     name: 'BPJS Kesehatan', 
-    logoAsset: 'bpjs-logo.png',
+    logoAsset: 'bpjs.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
   Biller(
     id: 'bpjs-surakarta', 
     name: 'BPJS Ketenagakerjaan', 
-    logoAsset: 'bpjs-ketenagakerjaan-logo.png',
+    logoAsset: 'bpjs.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
   Biller(
     id: 'bpjs-sukoharjo', 
     name: 'BPJS Denda', 
-    logoAsset: 'bpjs-logo.png',
+    logoAsset: 'bpjs.png',
     rule: BillerInputRule(minLength: 5, maxLength: 12)
   ),
 ];
@@ -81,6 +81,7 @@ class BillCategories {
   static final pdam = BillCategory(
     id: 'pdam', 
     title: 'PDAM', 
+    logoAsset: 'pdam.png',
     billers: _pdamBiller, 
     onBillerSelected: (context, biller) => pushSlide(
       context,
@@ -91,6 +92,7 @@ class BillCategories {
   static final pln = BillCategory(
     id: 'pln', 
     title: 'PLN', 
+    logoAsset: 'pln-logo.png',
     billers: _plnBiller, 
     onBillerSelected: (context, biller) => pushSlide(
       context,
@@ -101,6 +103,7 @@ class BillCategories {
   static final bpjs = BillCategory(
     id: 'bpjs', 
     title: 'BPJS', 
+    logoAsset: 'bpjs.png',
     billers: _bpjsBiller, 
     onBillerSelected: (context, biller) => pushSlide(
       context,
