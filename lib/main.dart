@@ -31,10 +31,7 @@ class SmileCell extends StatelessWidget {
       navigatorObservers: [routeObserver],
       title: "Smile Cell",
       theme: ThemeData(
-        fontFamily: GoogleFonts.googleSansFlex().fontFamily,
-        textTheme: GoogleFonts.googleSansFlexTextTheme(
-          ThemeData.light().textTheme
-        ),
+        fontFamily: "GoogleSansFlex",
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0xFF2C93CB),
           primary: Color(0xFF2C93CB),
