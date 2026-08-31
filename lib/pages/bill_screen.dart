@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:smile_cell/component/tab_bar_section.dart';
 import 'package:smile_cell/data/models/bill_model.dart';
 
 class BillScreen extends StatefulWidget {
@@ -81,7 +82,10 @@ class _BillScreenState extends State<BillScreen>
         child: Column(
           children: [
             _SearchField(controller: _searchController),
-            _TabBarSection(controller: _tabController),
+            TabBarSection(
+              controller: _tabController,
+              tabs: ["Pilih Layanan", "Tersimpan"]
+            ),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -148,34 +152,6 @@ class _SearchField extends StatelessWidget {
     borderRadius: BorderRadius.circular(8.0),
     borderSide: BorderSide(color: color, width: 1.0)
   );
-}
-
-class _TabBarSection extends StatelessWidget {
-  const _TabBarSection({required this.controller});
-
-  final TabController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: TabBar(
-        controller: controller,
-        indicatorColor: Theme.of(context).colorScheme.primary,
-        indicatorWeight: 2.5,
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        labelColor: Theme.of(context).colorScheme.primary,
-        unselectedLabelColor: Colors.grey,
-        labelStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
-        tabs: [
-          Tab(height: 46, text: "Pilih Layanan"),
-          Tab(height: 46, text: "Tersimpan")
-        ]
-      ),
-    );
-  }
 }
 
 class _BillerList extends StatelessWidget {

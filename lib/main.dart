@@ -1,7 +1,6 @@
 // TODO: Membuat splashscreen, input no hp screen, input pin screen, input otp screen, input data diri screen
 
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
 import "package:provider/provider.dart";
 import "package:smile_cell/config/bill_config.dart";
 import "package:smile_cell/pages/login_screen.dart";
