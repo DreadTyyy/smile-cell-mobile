@@ -8,6 +8,7 @@ import "package:smile_cell/pages/home_screen.dart";
 import "package:smile_cell/pages/login_screen.dart";
 import "package:smile_cell/pages/bill_screen.dart";
 import "package:smile_cell/pages/splash_screen.dart";
+import "package:smile_cell/pages/telco_screen.dart";
 import "package:smile_cell/providers/auth_provider.dart";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -31,10 +32,7 @@ class SmileCell extends StatelessWidget {
       navigatorObservers: [routeObserver],
       title: "Smile Cell",
       theme: ThemeData(
-        fontFamily: GoogleFonts.googleSansFlex().fontFamily,
-        textTheme: GoogleFonts.googleSansFlexTextTheme(
-          ThemeData.light().textTheme
-        ),
+        fontFamily: "GoogleSansFlex",
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0xFF2C93CB),
           primary: Color(0xFF2C93CB),
@@ -44,7 +42,7 @@ class SmileCell extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => SplashScreen(),
+        "/": (context) => TelcoScreen(),
         "/home": (context) => const HomeScreen(),
         "/login": (context) => const LoginScreen(),
         for (final category in BillCategories.all) 
