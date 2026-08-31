@@ -1,6 +1,3 @@
-// TODO: Membuat error notifikasi input
-// TODO: Membuat deteksi provider berdasarkan no hp
-// TODO: UI paket
 // TODO: Pengambilan data dari server
 
 import 'package:flutter/material.dart';
@@ -10,6 +7,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:smile_cell/component/tab_bar_section.dart';
 import 'package:smile_cell/data/models/telco_model.dart';
 import 'package:smile_cell/services/phone_provider_detector.dart';
+import 'package:smile_cell/services/validation/phone_number_validator.dart';
 
 class TelcoScreen extends StatefulWidget {
   const TelcoScreen({
@@ -27,36 +25,55 @@ class _TelcoScreenState extends State<TelcoScreen>
   final _phoneNumberController = TextEditingController();
   String _phoneNumber = "";
   ProviderModel? _provider;
+  PhoneValidationError? _phoneValidationError;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _phoneNumberController.addListener(_onPhoneNumberChanged);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _phoneNumberController.removeListener(_onPhoneNumberChanged);
     super.dispose();
   }
 
-  void _onPhoneNumberChanged({bool isReset = false}) {
-    if (isReset) {
-      _phoneNumberController.clear();
-      setState(() {
-        _phoneNumber = "";
-        _provider = null;
-      });
-      return;
-    }
-    final next = _phoneNumberController.text.trim();
-    if (next == _phoneNumber) return;
+  void _onPhoneNumberChanged(String value) {
+    final validationResult = PhoneNumberValidator.validate(value);
     setState(() {
-      _phoneNumber = next;
+      _phoneNumber = value;
+      _phoneValidationError = validationResult.error;
       _provider = PhoneProviderDetector.detect(_phoneNumber);
     });
+  }
+
+  void _onResetPhoneNumber() {
+    _phoneNumberController.clear();
+    setState(() {
+      _phoneNumber = "";
+      _phoneValidationError = null;
+      _provider = null;
+    });
+  }
+
+  String? get _errorMsgInput {
+    switch (_phoneValidationError) {
+      case (PhoneValidationError.empty): 
+        return null;
+
+      case (PhoneValidationError.invalidCharacter):
+        return "Nomor hanphone hanya berisi angka";
+      
+      case (PhoneValidationError.invalidPrefix):
+        return "Masukkan nomor yang valid";
+
+      case (PhoneValidationError.invalidLength):
+        return null;
+      
+      case null:
+        return null;
+    }
   }
 
   @override
@@ -139,6 +156,8 @@ class _TelcoScreenState extends State<TelcoScreen>
               controller: _phoneNumberController,
               provider: _provider,
               onChanged: _onPhoneNumberChanged,
+              onReset: _onResetPhoneNumber,
+              errorText: _errorMsgInput
             ),
             TabBarSection(
               controller: _tabController,
@@ -170,76 +189,117 @@ class _InputNumberPhoneField extends StatelessWidget {
   const _InputNumberPhoneField({
     required this.controller,
     required this.provider,
-    required this.onChanged
+    required this.onChanged,
+    required this.onReset,
+    required this.errorText
   });
 
   final TextEditingController controller;
   final ProviderModel? provider;
-  final void Function({bool isReset}) onChanged;
+  final void Function(String value) onChanged;
+  final void Function() onReset;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
+    final selectedProvider = provider;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 12.0),
-      child: TextField(
-        controller: controller,
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.phone,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(12)
-        ],
-        style: TextStyle(
-          fontSize: 16.0,
-          fontWeight: FontWeight.w600
-        ),
-        decoration: InputDecoration(
-          hintText: "Masukkan nomor handphone",
-          hintStyle: TextStyle(
-            fontSize: 16.0,
-            color: Colors.black.withValues(alpha: 0.6),
-            fontWeight: FontWeight.w500
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Nomor Handphone",
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w500,
+              color: Colors.black.withValues(alpha: 0.8)
+            )
           ),
-          contentPadding: EdgeInsets.symmetric(vertical: 14.0),
-          filled: true,
-          fillColor: Colors.white,
-          prefixIcon: Padding(
-            padding: EdgeInsets.only(left: 16.0, right: 8.0),
-            child: provider == null ? 
-              HugeIcon(
-                icon: HugeIcons.strokeRoundedContact02,
+
+          SizedBox(height: 8.0),
+          
+          TextField(
+            controller: controller,
+            onChanged: onChanged,
+            textInputAction: TextInputAction.done,
+            keyboardType: TextInputType.phone,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(12)
+            ],
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600
+            ),
+            decoration: InputDecoration(
+              hintText: "Masukkan nomor handphone",
+              hintStyle: TextStyle(
+                fontSize: 16.0,
                 color: Colors.black.withValues(alpha: 0.6),
-                size: 24.0
-              ) :
-              Image.asset("assets/${provider.logoAsset}",
-                semanticLabel: "Logo ${provider.name}",
-                width: 24.0,
-                height: 24.0,
-                fit: BoxFit.contain,
+                fontWeight: FontWeight.w500
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 14.0),
+              filled: true,
+              fillColor: Colors.white,
+              prefixIcon: Padding(
+                padding: EdgeInsets.only(left: 16.0, right: 8.0),
+                child: selectedProvider == null ? 
+                  HugeIcon(
+                    icon: HugeIcons.strokeRoundedContact02,
+                    color: Colors.black.withValues(alpha: 0.6),
+                    size: 24.0
+                  ) :
+                  Image.asset("assets/${selectedProvider.logoAsset}",
+                    semanticLabel: "Logo ${selectedProvider.name}",
+                    width: 24.0,
+                    height: 24.0,
+                    fit: BoxFit.contain,
+                  )
               )
-          )
-          ,
-          prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-          suffixIcon: controller.text.isNotEmpty ? Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 16.0),
-            child: GestureDetector(
-              onTap: () => onChanged(isReset: true), 
-              child: CircleAvatar(
-                radius: 10.0,
-                backgroundColor: Colors.black.withValues(alpha: 0.4),
-                child: Icon(
-                  Icons.close_rounded,
-                  color: Colors.white,
-                  size: 16.0
+              ,
+              prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
+              suffixIcon: controller.text.isNotEmpty ? Padding(
+                padding: EdgeInsets.only(left: 8.0, right: 16.0),
+                child: GestureDetector(
+                  onTap: onReset, 
+                  child: CircleAvatar(
+                    radius: 10.0,
+                    backgroundColor: Colors.black.withValues(alpha: 0.4),
+                    child: Icon(
+                      Icons.close_rounded,
+                      color: Colors.white,
+                      size: 16.0
+                    )
+                  )
+                ),
+              ) : SizedBox(),
+              suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
+              enabledBorder: _border(Color(0xFFDDDDDD)),
+              focusedBorder: _border(Theme.of(context).colorScheme.primary),
+              border: _border(Color(0xFFDDDDDD))
+            )
+          ),
+
+          // === Error Message ===
+          if (errorText != null) ...[
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.05)
+              ),
+              child: Text(
+                errorText ?? "",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Theme.of(context).colorScheme.error
                 )
               )
-            ),
-          ) : SizedBox(),
-          suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
-          enabledBorder: _border(Color(0xFFDDDDDD)),
-          focusedBorder: _border(Theme.of(context).colorScheme.primary),
-          border: _border(Color(0xFFDDDDDD))
-        )
+            )
+          ]
+        ],
       )
     );
   }
