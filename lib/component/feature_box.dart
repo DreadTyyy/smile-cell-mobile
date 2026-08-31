@@ -44,7 +44,12 @@ class FeatureBox extends StatelessWidget {
                 width: 57.0,
                 child: icon
               ),
-              Text(title, style: const TextStyle(fontSize: 10.0)),
+              Text(
+                title, 
+                style: const TextStyle(
+                  fontSize: 10.0,
+                  color: Colors.black87,
+                  )),
             ],
           ),
         ),

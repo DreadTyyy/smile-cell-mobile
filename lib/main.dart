@@ -4,11 +4,11 @@ import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:provider/provider.dart";
 import "package:smile_cell/config/bill_config.dart";
-import "package:smile_cell/pages/home_screen.dart";
 import "package:smile_cell/pages/login_screen.dart";
 import "package:smile_cell/pages/bill_screen.dart";
 import "package:smile_cell/pages/splash_screen.dart";
 import "package:smile_cell/providers/auth_provider.dart";
+import "package:smile_cell/pages/main_screen.dart";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -45,7 +45,7 @@ class SmileCell extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/": (context) => SplashScreen(),
-        "/home": (context) => const HomeScreen(),
+        "/home": (context) => const MainScreen(),
         "/login": (context) => const LoginScreen(),
         for (final category in BillCategories.all) 
           '/${category.id}': (context) => BillScreen(category: category)

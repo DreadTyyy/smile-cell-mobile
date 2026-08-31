@@ -163,79 +163,98 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16.0),
-        child: Column(
+        child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.all(16.0),
-              width: double.infinity,
-              color: Theme.of(context).colorScheme.primary,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Jumlah Saldo Kamu",
-                    style: GoogleFonts.getFont(
-                      "Google Sans Flex",
-                      fontSize: 14.0,
-                      color: Theme.of(context).colorScheme.surface,
+            Positioned.fill(
+              child: Container(
+                color: Theme.of(context).colorScheme.surface,
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.0),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Theme.of(context).colorScheme.primary,
+                        Color(0xFF1B6A94),
+                      ]
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _isBalanceHidden ? "Rp•••••••" : "Rp100.000",
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w700,
+                        "Jumlah Saldo Kamu",
+                        style: GoogleFonts.getFont(
+                          "Google Sans Flex",
+                          fontSize: 14.0,
                           color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
-                      SizedBox(width: 8.0),
-                      GestureDetector(
-                        onTap: () => setState(
-                          () => _isBalanceHidden = !_isBalanceHidden,
-                        ),
-                        child: Icon(
-                          _isBalanceHidden
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                          color: Theme.of(context).colorScheme.surface,
-                          size: 18.0,
-                        ),
+                      SizedBox(height: 8.0),
+                      Row(
+                        children: [
+                          Text(
+                            _isBalanceHidden ? "Rp•••••••" : "Rp100.000",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
+                          ),
+                          SizedBox(width: 8.0),
+                          GestureDetector(
+                            onTap: () => setState(
+                              () => _isBalanceHidden = !_isBalanceHidden,
+                            ),
+                            child: Icon(
+                              _isBalanceHidden
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: Theme.of(context).colorScheme.surface,
+                              size: 18.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Container(
-              color: Theme.of(context).colorScheme.surface,
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _buildBalanceAction(
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedPlusSignSquare,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 24.0,
-                    ),
-                    label: "Isi Saldo",
-                    onTap: () {},
+                ),
+                Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildBalanceAction(
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedPlusSignSquare,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 24.0,
+                        ),
+                        label: "Isi Saldo",
+                        onTap: () {},
+                      ),
+                      SizedBox(width: 20.0),
+                      _buildBalanceAction(
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoneySend02,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 24.0,
+                        ),
+                        label: "Kirim Saldo",
+                        onTap: () {},
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 20.0),
-                  _buildBalanceAction(
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedMoneySend02,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 24.0,
-                    ),
-                    label: "Kirim Saldo",
-                    onTap: () {},
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
