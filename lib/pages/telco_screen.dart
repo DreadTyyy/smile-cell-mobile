@@ -12,8 +12,10 @@ import 'package:smile_cell/services/validation/phone_number_validator.dart';
 class TelcoScreen extends StatefulWidget {
   const TelcoScreen({
     super.key,
+    required this.type
   });
 
+  final TelcoType type;
 
   @override
   State<TelcoScreen> createState() => _TelcoScreenState();
@@ -30,7 +32,11 @@ class _TelcoScreenState extends State<TelcoScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2, 
+      vsync: this,
+      initialIndex: widget.type == TelcoType.pulsa ? 0 : 1
+    );
   }
 
   @override
