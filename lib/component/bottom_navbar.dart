@@ -69,7 +69,7 @@ class BottomNavbar extends StatelessWidget {
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.only(top: 12.0, bottom: 2.0),
             decoration: BoxDecoration(
               gradient: isActive
                   ? LinearGradient(
@@ -94,7 +94,7 @@ class BottomNavbar extends StatelessWidget {
               size: 24.0,
             ),
           ),
-          const SizedBox(height: 4.0),
+          const SizedBox(height: 2.0),
           Text(
             item.label,
             style: TextStyle(
@@ -103,7 +103,7 @@ class BottomNavbar extends StatelessWidget {
               color: isActive ? Colors.black : inactiveColor,
             ),
           ),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 12.0),
         ],
       ),
     );

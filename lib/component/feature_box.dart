@@ -14,7 +14,18 @@ class FeatureBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            offset: const Offset(0, 2),
+            blurRadius: 12.0,
+          ),
+        ],
+      ),
+    child: Material(
       color: const Color(0xFFFFFFFF),
       borderRadius: BorderRadius.circular(12.0),
       child: InkWell(
@@ -49,11 +60,13 @@ class FeatureBox extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 10.0,
                   color: Colors.black87,
+                  fontWeight: FontWeight.w500
                   )),
             ],
           ),
         ),
       ),
+     ),
     );
   }
 }

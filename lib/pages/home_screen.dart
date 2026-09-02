@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:smile_cell/component/feature_box.dart';
 import 'package:smile_cell/config/bill_config.dart';
 import 'package:hugeicons/hugeicons.dart';
+import "package:smile_cell/config/telco_config.dart";
+import "package:smile_cell/data/models/telco_model.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -33,8 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       "Smile",
-                      style: GoogleFonts.getFont(
-                        "Google Sans Flex",
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.primary,
@@ -42,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       "Cell",
-                      style: GoogleFonts.getFont(
-                        "Google Sans Flex",
+                      style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.primary,
@@ -54,21 +53,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Selamat pagi,",
-                  style: GoogleFonts.getFont(
-                    "Google Sans Flex",
+                  style: TextStyle(
                     fontSize: 16.0,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 Text(
                   "Lebron James",
-                  style: GoogleFonts.getFont(
-                    "Google Sans Flex",
-                    fontSize: 16.0,
+                  style: TextStyle(
+                    fontSize: 14.0,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -87,8 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 24.0),
               Text(
                 "Top Up",
-                style: GoogleFonts.getFont(
-                  "Google Sans Flex",
+                style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
@@ -103,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       size: 24.0,
                     ),
                     title: "Paket Data",
-                    onTap: () {},
+                    onTap: () => openTelcoScreen(context, TelcoType.data),
                   ),
                   SizedBox(width: 16.0),
                   FeatureBox(
@@ -113,15 +109,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       size: 24.0,
                     ),
                     title: "Paket Pulsa",
-                    onTap: () {},
+                    onTap: () => openTelcoScreen(context, TelcoType.pulsa),
                   ),
                 ],
               ),
               SizedBox(height: 20.0),
               Text(
                 "Tagihan",
-                style: GoogleFonts.getFont(
-                  "Google Sans Flex",
+                style: TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.w600,
                 ),
@@ -179,8 +174,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16.0),
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
                         Theme.of(context).colorScheme.primary,
                         Color(0xFF1B6A94),
@@ -192,8 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         "Jumlah Saldo Kamu",
-                        style: GoogleFonts.getFont(
-                          "Google Sans Flex",
+                        style: TextStyle(
                           fontSize: 14.0,
                           color: Theme.of(context).colorScheme.surface,
                         ),

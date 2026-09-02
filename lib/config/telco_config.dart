@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:smile_cell/data/models/telco_model.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/telco_screen.dart';
 
 const phoneProviders = [
   ProviderModel(
@@ -61,3 +64,7 @@ const phoneProviders = [
     ]
   ),
 ];
+
+Future<void> openTelcoScreen(BuildContext context, TelcoType type) {
+  return pushSlide(context, TelcoScreen(type: type));
+}
