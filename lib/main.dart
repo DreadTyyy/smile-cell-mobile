@@ -1,12 +1,13 @@
 // TODO: Membuat splashscreen, input no hp screen, input pin screen, input otp screen, input data diri screen
 
 import "package:flutter/material.dart";
-import "package:google_fonts/google_fonts.dart";
 import "package:provider/provider.dart";
-import "package:smile_cell/pages/home_screen.dart";
+import "package:smile_cell/config/bill_config.dart";
 import "package:smile_cell/pages/login_screen.dart";
+import "package:smile_cell/pages/bill_screen.dart";
 import "package:smile_cell/pages/splash_screen.dart";
 import "package:smile_cell/providers/auth_provider.dart";
+import "package:smile_cell/pages/main_screen.dart";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -25,10 +26,11 @@ class SmileCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scrollBehavior: const GlowScrollBehavior(),
       navigatorObservers: [routeObserver],
       title: "Smile Cell",
       theme: ThemeData(
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+        fontFamily: "GoogleSansFlex",
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0xFF2C93CB),
           primary: Color(0xFF2C93CB),
@@ -38,10 +40,33 @@ class SmileCell extends StatelessWidget {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => const SplashScreen(),
-        "/home": (context) => const HomeScreen(),
+        "/": (context) => SplashScreen(),
+        "/home": (context) => const MainScreen(),
         "/login": (context) => const LoginScreen(),
+        for (final category in BillCategories.all) 
+          '/${category.id}': (context) => BillScreen(category: category)
       },
     );
   }
+}
+
+class GlowScrollBehavior extends MaterialScrollBehavior {
+  const GlowScrollBehavior();
+
+  @override
+  Widget buildOverscrollIndicator(
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
+    return GlowingOverscrollIndicator(
+      axisDirection: details.direction,
+      color: Theme.of(context).colorScheme.primary,
+      child: child,
+    );
+  }
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) =>
+      const ClampingScrollPhysics();
 }
