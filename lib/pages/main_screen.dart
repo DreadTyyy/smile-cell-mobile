@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:smile_cell/component/bottom_navbar.dart";
 import "package:smile_cell/pages/home_screen.dart";
+import "package:smile_cell/pages/profile_screen.dart";
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     _EmptyScreen(title: "Aktivitas"),
     _EmptyScreen(title: "Promo"),
-    _EmptyScreen(title: "Profil"),
+    ProfileScreen(),
   ];
 
   @override
