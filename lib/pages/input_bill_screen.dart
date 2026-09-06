@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smile_cell/data/models/bill_model.dart';
+import 'package:smile_cell/data/models/detail_bill_model.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/detail_bill_screen.dart';
 
 class InputBillScreen extends StatefulWidget {
   const InputBillScreen({
@@ -45,6 +48,29 @@ class _InputBillScreenState extends State<InputBillScreen> {
 
     FocusScope.of(context).unfocus(); 
     // TODO: Fungsi untuk cek tagihan user
+
+    final product = BillProduct(
+      name: widget.biller.name.split(" ")[0],
+      description: widget.biller.name,
+      imageAsset: widget.biller.logoAsset
+    );
+    final detail = DetailBillModel(
+      information: [
+        BillInformation(key: "Nomor Pelanggan", value: _controller.text),
+        BillInformation(key: "Nama", value: "Zaky"),
+      ],
+      price: 100000,
+      discount: 5000,
+      fee: 2500
+    );
+
+    pushSlide(
+      context,
+      DetailBillScreen(
+        product: product,
+        detail: detail
+      )
+    );
   }
 
   @override
@@ -74,6 +100,7 @@ class _InputBillScreenState extends State<InputBillScreen> {
       ),
       body: SafeArea(
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               Padding(
