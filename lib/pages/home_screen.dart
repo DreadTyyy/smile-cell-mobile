@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Transaksi Berlangsung",
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
-              SizedBox(height: 12.0),
+              SizedBox(height: 16.0),
               _buildTransactionBox(),
               SizedBox(height: 24.0),
             ],
@@ -236,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildToggleButton() {
     return Material(
-      color: Color(0xFFF0F0F0),
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(10.0),
       child: InkWell(
         onTap: () =>
