@@ -38,6 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0.0,
+        foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -82,6 +86,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ],
+        ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Divider(
+            height: 1.0,
+            thickness: 1.0,
+            color: Color(0xFFDDDDDD),
+          ),
         ),
       ),
       body: SingleChildScrollView(

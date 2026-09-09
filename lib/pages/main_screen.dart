@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:smile_cell/component/bottom_navbar.dart";
+import "package:smile_cell/pages/activity_screen.dart";
 import "package:smile_cell/pages/home_screen.dart";
 
 class MainScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final _screens = const [
     HomeScreen(),
-    _EmptyScreen(title: "Aktivitas"),
+    ActivityScreen(),
     _EmptyScreen(title: "Promo"),
     _EmptyScreen(title: "Profil"),
   ];
