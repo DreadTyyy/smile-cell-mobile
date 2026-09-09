@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -118,23 +120,26 @@ class _DetailProfile extends StatelessWidget {
                       fontSize: 16.0,
                     )
                   ),
-                  Row(
-                    spacing: 4.0,
-                    children: [
-                      SvgPicture.asset('assets/icon-edit.svg',
-                        width: 20,
-                        height: 20,
-                        fit: BoxFit.contain,
-                      ),
-                      Text(
-                        "Edit",
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).colorScheme.primary
+                  GestureDetector(
+                    onTap: () => pushSlide(context, EditProfileScreen()),
+                    child: Row(
+                      spacing: 4.0,
+                      children: [
+                        SvgPicture.asset('assets/icon-edit.svg',
+                          width: 20,
+                          height: 20,
+                          fit: BoxFit.contain,
                         ),
-                      )
-                    ],
+                        Text(
+                          "Edit",
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                            color: Theme.of(context).colorScheme.primary
+                          ),
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
