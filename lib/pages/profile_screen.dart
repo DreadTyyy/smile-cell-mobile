@@ -29,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            SizedBox(height: 20.0),
             _HeaderProfile(),
             SizedBox(height: 24.0),
             _DetailProfile(),
@@ -46,6 +47,15 @@ class _HeaderProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        CircleAvatar(
+          radius: 40,
+          backgroundColor: Color(0xFF848484),
+          child: Icon(
+            Icons.person,
+            size: 60,
+            color: Colors.white,
+          ),
+        ),
         SizedBox(height: 20.0),
         Text(
           "+62 8523 2343 8439",
@@ -74,58 +84,22 @@ class _DetailProfile extends StatelessWidget {
       {'key': "Nama", 'value': "John Doe"},
       {'key': "Kota", 'value': "Surakarta"},
     ];
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0,2), 
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 16.0
-          )]
-      ),
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Color(0xFFDDDDDD),
-                  width: 1.0,
-                )
-              )
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Informasi Pengguna",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                  )
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.edit,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    Text(
-                      "Edit",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
-          ...profile.map((item) {
-            return Container(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(16.0), topRight: Radius.circular(16.0)),
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0,2), 
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 16.0
+            )]
+        ),
+        child: Column(
+          children: [
+            Container(
               padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 border: Border(
@@ -139,26 +113,70 @@ class _DetailProfile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    item['key'] ?? "",
+                    "Informasi Pengguna",
                     style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black.withValues(alpha: 0.8)
-                    ),
+                      fontSize: 16.0,
+                    )
                   ),
-                  Text(
-                    item['value'] ?? "",
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black
-                    ),
+                  Row(
+                    spacing: 4.0,
+                    children: [
+                      SvgPicture.asset('assets/icon-edit.svg',
+                        width: 20,
+                        height: 20,
+                        fit: BoxFit.contain,
+                      ),
+                      Text(
+                        "Edit",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.primary
+                        ),
+                      )
+                    ],
                   )
                 ],
               ),
-            );
-          })
-        ],
+            ),
+            ...profile.asMap().entries.map((entry) {
+              int index = entry.key;
+              var item = entry.value;
+              return Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: index != profile.length - 1 ? BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Color(0xFFDDDDDD),
+                      width: 1.0,
+                    )
+                  )
+                ) : null,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item['key'] ?? "",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black.withValues(alpha: 0.8)
+                      ),
+                    ),
+                    Text(
+                      item['value'] ?? "",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black
+                      ),
+                    )
+                  ],
+                ),
+              );
+            })
+          ],
+        ),
       ),
     );
   }
@@ -168,36 +186,43 @@ class _ListMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menus = [
-      {'imageIcon': 'contact_support.svg', 'title': 'Contact Support', 'onTap': () => {}},
-      {'imageIcon': 'logout.svg', 'title': 'Keluar', 'onTap': () => {}},
+      {'imageIcon': 'icon-contact-support.svg', 'title': 'Contact Support', 'onTap': () => {}},
+      {'imageIcon': 'icon-logout.svg', 'title': 'Keluar', 'onTap': () => {}},
     ];
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      decoration: BoxDecoration(color: Colors.white),
-      child: Column(
-        children: menus.map((item) {
-          return Container(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFDDDDDD), width: 1))),
-            child: Row(
-              spacing: 16.0,
-              children: [
-                SvgPicture.asset(item['imageIcon'].toString(),
-                  width: 20,
-                  height: 20,
-                  fit: BoxFit.contain,
-                ),
-                Text(
-                  item['title'].toString(),
-                  style: TextStyle(
-                    fontSize: 16.0
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+        decoration: BoxDecoration(color: Colors.white),
+        child: Column(
+          children: menus.asMap().entries.map((entry) {
+            int index = entry.key;
+            var item = entry.value;
+
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              decoration: index != menus.length - 1 ? 
+                BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFDDDDDD), width: 1))) : null,
+              child: Row(
+                spacing: 16.0,
+                children: [
+                  SvgPicture.asset('assets/${item['imageIcon'].toString()}',
+                    width: 20,
+                    height: 20,
+                    fit: BoxFit.contain,
                   ),
-                )
-              ],
-            ),
-          );
-        }).toList(),
-      )
+                  Text(
+                    item['title'].toString(),
+                    style: TextStyle(
+                      fontSize: 16.0
+                    ),
+                  )
+                ],
+              ),
+            );
+          }).toList(),
+        )
+      ),
     );
   }
 }
