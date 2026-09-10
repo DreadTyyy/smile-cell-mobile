@@ -1,4 +1,8 @@
+// TODO: LOGIC EDIT PROFILE
+
 import 'package:flutter/material.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/edit_phone_number_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -68,7 +72,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () => {},
+                              onTap: () => {
+                                pushSlide(context, EditPhoneNumberScreen())
+                              },
                               borderRadius: BorderRadius.circular(4.0),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
