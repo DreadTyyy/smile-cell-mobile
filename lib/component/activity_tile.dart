@@ -26,7 +26,7 @@ class ActivityTile extends StatelessWidget {
         ],
       ),
       child: Material(
-        color: Theme.of(context).colorScheme.surface,
+        color: const Color(0xFFFFFFFF),
         borderRadius: BorderRadius.circular(12.0),
         child: InkWell(
           onTap: onTap,
@@ -34,11 +34,10 @@ class ActivityTile extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFDDDDDD)),
               borderRadius: BorderRadius.circular(12.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: Colors.black.withValues(alpha: 0.02),
                   offset: const Offset(0, 2),
                   blurRadius: 16.0,
                 ),
@@ -63,7 +62,7 @@ class ActivityTile extends StatelessWidget {
                         transaction.billerName,
                         style: const TextStyle(
                           fontSize: 14.0,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
                         maxLines: 1,
@@ -73,8 +72,8 @@ class ActivityTile extends StatelessWidget {
                       Text(
                         "ID: ${transaction.number}",
                         style: TextStyle(
-                          fontSize: 13.0,
-                          color: Colors.black.withValues(alpha: 0.7),
+                          fontSize: 14.0,
+                          color: Colors.black,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -83,8 +82,9 @@ class ActivityTile extends StatelessWidget {
                       Text(
                         formatTransactionDate(transaction.dateTime),
                         style: TextStyle(
-                          fontSize: 13.0,
+                          fontSize: 14.0,
                           color: Colors.black.withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],

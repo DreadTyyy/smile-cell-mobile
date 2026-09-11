@@ -41,22 +41,15 @@ class _ActivityScreenState extends State<ActivityScreen>
         elevation: 0.0,
         foregroundColor: Colors.black,
         automaticallyImplyLeading: false,
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(
-            height: 1.0,
-            thickness: 1.0,
-            color: Color(0xFFDDDDDD),
-          ),
-        ),
       ),
       body: SafeArea(
         child: Column(
           children: [
-            TabBarSection(
+            Padding(padding: EdgeInsets.only(top : 8.0),
+            child: TabBarSection(
               controller: _tabController,
               tabs: const ["Riwayat", "Berlangsung"],
-            ),
+            ),),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -97,12 +90,12 @@ class _HistoryList extends StatelessWidget {
       children: [
         for (final entry in grouped.entries) ...[
           Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 16.0),
             child: Text(
               entry.key,
               style: const TextStyle(
                 fontSize: 16.0,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),

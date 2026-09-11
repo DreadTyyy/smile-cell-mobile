@@ -18,6 +18,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isBalanceHidden = false;
   bool _isTransactionExpanded = false;
+  bool _isScrolled = false;
+
+  final _scrollController = ScrollController();
 
   static const _collapsedCount = 3;
   static const _visibleCountWhenExpanded = 6;
@@ -30,6 +33,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<TransactionModel> get _pendingTransactions =>
       getPendingTransactions(dummyTransactions);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final scrolled = _scrollController.offset > 0;
+    if (scrolled == _isScrolled) return;
+    setState(() {
+      _isScrolled = scrolled;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Divider(
             height: 1.0,
             thickness: 1.0,
-            color: Color(0xFFDDDDDD),
+            color: _isScrolled ? const Color(0xFFDDDDDD) : Colors.transparent,
           ),
         ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
