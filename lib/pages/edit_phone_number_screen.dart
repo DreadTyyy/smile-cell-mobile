@@ -3,6 +3,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/otp_screen.dart';
 
 class EditPhoneNumberScreen extends StatefulWidget {
   const EditPhoneNumberScreen({super.key});
@@ -13,6 +15,34 @@ class EditPhoneNumberScreen extends StatefulWidget {
 
 class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
   final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(() => setState(() {}));
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmit() {
+    final fullPhoneNumber = "0${_controller.text}";
+    pushSlide(
+      context, 
+      OtpScreen(
+        phoneNumber: fullPhoneNumber,
+      )
+    );
+  }
+
+  bool get _isButtonNotDisabled => 
+    _controller.text.isNotEmpty &&
+    _controller.text.length >= 8 &&
+    _controller.text.length <= 12;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +79,7 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
                 SizedBox(height: 12.0),
 
                 Text(
-                  "Silkahkan masukkan nomor telepon baru Anda. Pastikan nomor yang dimasukkan aktif dan dapat menerima kode verifikasi.",
+                  "Silahkan masukkan nomor telepon baru Anda. Pastikan nomor yang dimasukkan aktif dan dapat menerima kode verifikasi.",
                   style: TextStyle(
                     fontSize: 16.0,
                   )
@@ -118,7 +148,7 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
                     width: double.infinity,
                     height: 54.0,
                     child: ElevatedButton(
-                      onPressed: null,
+                      onPressed: _isButtonNotDisabled ? _handleSubmit : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2C93CB),
                         padding: const EdgeInsets.symmetric(
