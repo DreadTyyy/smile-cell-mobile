@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:smile_cell/component/feature_box.dart';
 import 'package:smile_cell/config/bill_config.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:smile_cell/component/transaction_tile.dart';
 import "package:smile_cell/config/telco_config.dart";
 import "package:smile_cell/data/models/telco_model.dart";
+import "package:smile_cell/config/transaction_config.dart";
+import "package:smile_cell/data/models/transaction_model.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +17,43 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isBalanceHidden = false;
+  bool _isTransactionExpanded = false;
+  bool _isScrolled = false;
+
+  final _scrollController = ScrollController();
+
+  static const _collapsedCount = 3;
+  static const _visibleCountWhenExpanded = 6;
+  static const _tileHeight = 48.0;
+  static const _tileGap = 8.0;
+
+  static const _expandedMaxHeight =
+      (_tileHeight * _visibleCountWhenExpanded) +
+      (_tileGap * (_visibleCountWhenExpanded - 1));
+
+  List<TransactionModel> get _pendingTransactions =>
+      getPendingTransactions(dummyTransactions);
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final scrolled = _scrollController.offset > 0;
+    if (scrolled == _isScrolled) return;
+    setState(() {
+      _isScrolled = scrolled;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0.0,
+        foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0.0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -57,24 +101,27 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   "Selamat pagi,",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
                 ),
                 Text(
                   "Lebron James",
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
           ],
         ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Divider(
+            height: 1.0,
+            thickness: 1.0,
+            color: _isScrolled ? const Color(0xFFDDDDDD) : Colors.transparent,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(
@@ -84,10 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 24.0),
               Text(
                 "Top Up",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 12.0),
               Row(
@@ -116,10 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 20.0),
               Text(
                 "Tagihan",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
               ),
               SizedBox(height: 12.0),
               Wrap(
@@ -136,6 +177,128 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () => openBillScreen(context, category),
                     ),
                 ],
+              ),
+              SizedBox(height: 20.0),
+              Text(
+                "Transaksi Berlangsung",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(height: 16.0),
+              _buildTransactionBox(),
+              SizedBox(height: 24.0),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionBox() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            offset: Offset(0, 2),
+            blurRadius: 12.0,
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Container(
+          width: double.infinity,
+          color: Theme.of(context).colorScheme.surface,
+          padding: EdgeInsets.all(12.0),
+          child: _pendingTransactions.isEmpty
+              ? _buildEmptyTransaction()
+              : _buildTransactionList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyTransaction() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 24.0),
+      child: Center(
+        child: Text(
+          "Belum ada transaksi berlangsung",
+          style: TextStyle(
+            fontSize: 14.0,
+            color: Colors.black.withValues(alpha: 0.5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionList() {
+    final pending = _pendingTransactions;
+    final hasMore = pending.length > _collapsedCount;
+
+    final visible = _isTransactionExpanded
+        ? pending
+        : pending.take(_collapsedCount).toList();
+
+    final list = Column(
+      children: [
+        for (int i = 0; i < visible.length; i++) ...[
+          TransactionTile(transaction: visible[i], onTap: () {}),
+          if (i < visible.length - 1) SizedBox(height: _tileGap),
+        ],
+      ],
+    );
+
+    return Column(
+      children: [
+        if (_isTransactionExpanded && hasMore)
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: _expandedMaxHeight),
+            child: NotificationListener<OverscrollNotification>(
+              onNotification: (notification) => true,
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: list,
+              ),
+            ),
+          )
+        else
+          list,
+        if (hasMore) ...[SizedBox(height: 8.0), _buildToggleButton()],
+      ],
+    );
+  }
+
+  Widget _buildToggleButton() {
+    return Material(
+      color: Theme.of(context).colorScheme.surface,
+      borderRadius: BorderRadius.circular(10.0),
+      child: InkWell(
+        onTap: () =>
+            setState(() => _isTransactionExpanded = !_isTransactionExpanded),
+        borderRadius: BorderRadius.circular(10.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 14.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _isTransactionExpanded ? "Sembunyikan" : "Lainnya",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              SizedBox(width: 6.0),
+              Icon(
+                _isTransactionExpanded
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded,
+                color: Theme.of(context).colorScheme.primary,
+                size: 20.0,
               ),
             ],
           ),
@@ -161,9 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Container(
-                color: Theme.of(context).colorScheme.surface,
-              ),
+              child: Container(color: Theme.of(context).colorScheme.surface),
             ),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -179,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       colors: [
                         Theme.of(context).colorScheme.primary,
                         Color(0xFF1B6A94),
-                      ]
+                      ],
                     ),
                   ),
                   child: Column(
@@ -269,10 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             icon,
             SizedBox(height: 6.0),
-            Text(
-              label,
-              style: TextStyle(fontSize: 12.0, color: Colors.black87),
-            ),
+            Text(label, style: TextStyle(fontSize: 12.0, color: Colors.black87)),
           ],
         ),
       ),
