@@ -1,3 +1,7 @@
+// TODO: Mengatur otp screen general
+// TODO: otp untuk registrasi awal, mengganti nomor hp
+// TODO: Sistem dinamis fungsi submit, next slide screen
+
 import "dart:async";
 
 import "package:flutter/material.dart";
