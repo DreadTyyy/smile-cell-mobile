@@ -7,6 +7,7 @@ import "package:smile_cell/config/telco_config.dart";
 import "package:smile_cell/data/models/telco_model.dart";
 import "package:smile_cell/config/transaction_config.dart";
 import "package:smile_cell/data/models/transaction_model.dart";
+import "package:smile_cell/config/top_up_config.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -394,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           size: 24.0,
                         ),
                         label: "Isi Saldo",
-                        onTap: () {},
+                        onTap: () => openTopUpScreen(context),
                       ),
                       SizedBox(width: 20.0),
                       _buildBalanceAction(
