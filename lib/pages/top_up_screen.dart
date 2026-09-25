@@ -43,7 +43,7 @@ class TopUpScreen extends StatelessWidget {
         ),
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
-          icon: const Icon(Icons.chevron_left),
+          icon: const Icon(Icons.arrow_back_rounded),
         ),
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(1.0),
@@ -268,7 +268,7 @@ class _AmountSheetState extends State<_AmountSheet> {
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 14.0),
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                    padding: const EdgeInsets.only(left: 16.0, right: 2.0),
                     child: Text(
                       "Rp",
                       style: TextStyle(
