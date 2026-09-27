@@ -1,10 +1,13 @@
 import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:provider/provider.dart";
 import "package:smile_cell/config/top_up_config.dart";
 import "package:smile_cell/config/transaction_config.dart";
 import "package:smile_cell/data/models/payment_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
+import "package:smile_cell/providers/balance_provider.dart";
 
 class TransferScreen extends StatefulWidget {
   const TransferScreen({
@@ -75,6 +78,28 @@ class _TransferScreenState extends State<TransferScreen> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+  void _finish() {
+    final messenger = ScaffoldMessenger.of(context);
+    final isExpired = _isExpired;
+
+    if (!isExpired) {
+      context.read<BalanceProvider>().topUp(widget.amount);
+    }
+
+    _backToHome();
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          isExpired
+              ? "Waktu pembayaran telah habis"
+              : "Saldo ${formatRupiah(widget.amount)} berhasil ditambahkan",
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -141,6 +166,7 @@ class _TransferScreenState extends State<TransferScreen> {
 
   Widget _buildCountdown() {
     final error = Theme.of(context).colorScheme.error;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
       decoration: BoxDecoration(
@@ -238,6 +264,7 @@ class _TransferScreenState extends State<TransferScreen> {
 
   Widget _buildActions() {
     final primary = Theme.of(context).colorScheme.primary;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
       child: Column(
@@ -289,7 +316,7 @@ class _TransferScreenState extends State<TransferScreen> {
             width: double.infinity,
             height: 54.0,
             child: ElevatedButton(
-              onPressed: _backToHome,
+              onPressed: _finish,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primary,
                 elevation: 0.0,
@@ -397,6 +424,7 @@ class _NoticeBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
+
     return CustomPaint(
       foregroundPainter: _DashedBorderPainter(
         color: primary.withValues(alpha: 0.6),
@@ -460,6 +488,7 @@ class _DashedBorderPainter extends CustomPainter {
           const Radius.circular(_radius),
         ),
       );
+
     for (final metric in outline.computeMetrics()) {
       double distance = 0.0;
 

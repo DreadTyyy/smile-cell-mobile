@@ -1,5 +1,4 @@
 import "dart:async";
-
 import "package:flutter/material.dart";
 import "package:pinput/pinput.dart";
 
@@ -129,7 +128,6 @@ class _OtpScreenState extends State<OtpScreen> {
                   icon: const Icon(Icons.arrow_back_rounded),
                 ),
               ),
-
               Expanded(
                 child: SafeArea(
                   top: false,
@@ -166,9 +164,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             textAlign: TextAlign.center,
                           ),
                         ),
-
                         const SizedBox(height: 24.0),
-
                         Center(
                           child: Pinput(
                             length: 6,
@@ -201,9 +197,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 16.0),
-
                         Center(
                           child: _canResend
                               ? TextButton(
@@ -230,9 +224,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                   ),
                                 ),
                         ),
-
                         const Spacer(),
-
                         SizedBox(
                           width: double.infinity,
                           height: 54.0,
@@ -267,7 +259,6 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
             ],
           ),
-
           if (_showBanner)
             Positioned(
               top: MediaQuery.of(context).padding.top + 8.0,
@@ -293,9 +284,7 @@ class _OtpScreenState extends State<OtpScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Icon(Icons.error_outline, color: Colors.white, size: 20.0),
-
             const SizedBox(width: 12.0),
-
             const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
