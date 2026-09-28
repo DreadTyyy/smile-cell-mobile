@@ -21,12 +21,12 @@ enum TelcoType {
 class TelcoModel {
   final String id;
   final TelcoType type;
-  final String nominal;
-  final String price;
+  final double nominal;
+  final double price;
   final String provider;
   final String? description;
   final bool isDiscount;
-  final String? priceDiscount;
+  final double? priceDiscount;
 
   const TelcoModel({
     required this.id,

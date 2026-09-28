@@ -5,7 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:smile_cell/component/tab_bar_section.dart';
+import 'package:smile_cell/data/models/detail_bill_model.dart';
 import 'package:smile_cell/data/models/telco_model.dart';
+import 'package:smile_cell/helpers/formatCurrency.dart';
+import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/pages/detail_bill_screen.dart';
 import 'package:smile_cell/services/phone_provider_detector.dart';
 import 'package:smile_cell/services/validation/phone_number_validator.dart';
 
@@ -63,6 +67,63 @@ class _TelcoScreenState extends State<TelcoScreen>
     });
   }
 
+  void _onSubmitBill(TelcoType type, TelcoModel selectProduct) {
+    final provider = _provider;
+    if (provider == null) return;
+
+    final product = BillProduct(
+      name: type == TelcoType.pulsa ? "Pulsa" : "Paket Data", 
+      description: provider.name, 
+      imageAsset: provider.logoAsset
+    );
+
+    if (type == TelcoType.pulsa) {
+      _submitPulsa(product, selectProduct);
+    } else {
+      
+      _submitPaketData(product, selectProduct);
+    }
+  }
+
+  void _submitPaketData(BillProduct product, TelcoModel selectProduct) {
+    final detail = DetailBillModel(
+      information: [
+        BillInformation(key: "Nomor Handphone", value: "0852 3243 9337"),
+        BillInformation(key: "Nominal Kuota", value: "${selectProduct.nominal.toInt()} GB"),
+        BillInformation(key: "Masa Aktif", value: "30 hari"),
+      ], 
+      price: selectProduct.price, 
+      fee: 0, 
+      discount: selectProduct.priceDiscount ?? 0
+    );
+
+    pushSlide(
+      context, 
+      DetailBillScreen(
+        detail: detail,
+        product: product
+      )
+    );
+  }
+  void _submitPulsa(BillProduct product, TelcoModel selectProduct) {
+    final detail = DetailBillModel(
+      information: [
+        BillInformation(key: "Nomor Handphone", value: "0852 3243 9337"),
+        BillInformation(key: "Nominal Pulsa", value: formatIdr(selectProduct.nominal)),
+      ], 
+      price: selectProduct.price, 
+      fee: 0, 
+      discount: selectProduct.priceDiscount ?? 0
+    );
+    pushSlide(
+      context, 
+      DetailBillScreen(
+        detail: detail,
+        product: product
+      )
+    );
+  }
+
   String? get _errorMsgInput {
     switch (_phoneValidationError) {
       case (PhoneValidationError.empty): 
@@ -88,24 +149,24 @@ class _TelcoScreenState extends State<TelcoScreen>
       TelcoModel(
         id: '1', 
         type: TelcoType.pulsa, 
-        nominal: '15rb', 
-        price: 'Rp16.000', 
+        nominal: 15000, 
+        price: 16000, 
         provider: 'Telkomsel', 
         isDiscount: false
       ),
       TelcoModel(
         id: '2', 
         type: TelcoType.pulsa, 
-        nominal: '20rb', 
-        price: 'Rp21.000', 
+        nominal: 20000, 
+        price: 21000, 
         provider: 'Telkomsel', 
         isDiscount: true
       ),
       TelcoModel(
         id: '3', 
         type: TelcoType.pulsa, 
-        nominal: '25rb', 
-        price: '25.000', 
+        nominal: 25000, 
+        price: 25000, 
         provider: 'Telkomsel', 
         isDiscount: false
       ),
@@ -116,8 +177,8 @@ class _TelcoScreenState extends State<TelcoScreen>
         id: '1', 
         type: TelcoType.data, 
         description: 'Paket Seru Bulanan Internet 6 GB Selama 30 hari',
-        nominal: 'Kuota 6 GB', 
-        price: 'Rp55.000', 
+        nominal: 6, 
+        price: 55000, 
         provider: 'Telkomsel', 
         isDiscount: false
       ),
@@ -125,10 +186,11 @@ class _TelcoScreenState extends State<TelcoScreen>
         id: '2', 
         type: TelcoType.data, 
         description: 'Paket Seru Bulanan Internet 6 GB Selama 30 hari',
-        nominal: 'Kuota 6 GB', 
-        price: 'Rp55.000', 
+        nominal: 6, 
+        price: 55000, 
         provider: 'Telkomsel', 
-        isDiscount: true
+        isDiscount: true,
+        priceDiscount: 5000
       ),
     ];
 
@@ -176,10 +238,12 @@ class _TelcoScreenState extends State<TelcoScreen>
                   _PulsaList(
                     listPulsa: tempPulsa,
                     phoneNumber: _phoneNumber,
+                    onTap: _onSubmitBill
                   ),
                   _PaketDataList(
                     listPaketData: tempPaketData,
                     phoneNumber: _phoneNumber,
+                    onTap: _onSubmitBill
                   )
                 ],
               ),
@@ -319,11 +383,13 @@ class _InputNumberPhoneField extends StatelessWidget {
 class _PulsaList extends StatelessWidget {
   const _PulsaList({
     required this.listPulsa,
-    required this.phoneNumber
+    required this.phoneNumber,
+    required this.onTap
   });
 
   final List<TelcoModel> listPulsa;
   final String phoneNumber;
+  final void Function(TelcoType type, TelcoModel selectedProduct) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -351,14 +417,14 @@ class _PulsaList extends StatelessWidget {
             children: [
               Expanded(child: _PulsaTile(
                 dataPulsa: listPulsa[firstIndex],
-                onTap: () => {}
+                onTap: onTap
               )),
               SizedBox(width: 16.0),
               Expanded(
                 child: secondIndex < listPulsa.length ? 
                   _PulsaTile(
                     dataPulsa: listPulsa[secondIndex],
-                    onTap: () => {}
+                    onTap: onTap
                   ):
                   SizedBox()
               )
@@ -377,7 +443,7 @@ class _PulsaTile extends StatelessWidget {
   });
 
   final TelcoModel dataPulsa;
-  final void Function() onTap;
+  final void Function(TelcoType type, TelcoModel selectedProduct) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -385,7 +451,7 @@ class _PulsaTile extends StatelessWidget {
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(12.0),
       child: InkWell(
-        onTap: () => onTap,
+        onTap: () => onTap(TelcoType.pulsa, dataPulsa),
         borderRadius: BorderRadius.circular(12.0),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
@@ -401,7 +467,7 @@ class _PulsaTile extends StatelessWidget {
             spacing: 4.0,
             children: [
               Text(
-                dataPulsa.nominal,
+                _formatThousandRupiah(dataPulsa.nominal),
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w700,
@@ -410,7 +476,7 @@ class _PulsaTile extends StatelessWidget {
                 )
               ),
               Text(
-                dataPulsa.price,
+                formatIdr(dataPulsa.price),
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
@@ -424,16 +490,28 @@ class _PulsaTile extends StatelessWidget {
       )
     );
   }
+
+  String _formatThousandRupiah(double value) {
+    final val = value / 1000;
+
+    if (val % 1 == 0) {
+      return "${val.toInt()}rb";
+    }
+
+    return "${val}rb";
+  }
 }
 
 class _PaketDataList extends StatelessWidget {
   const _PaketDataList({
     required this.listPaketData,
-    required this.phoneNumber
+    required this.phoneNumber,
+    required this.onTap,
   });
 
   final List<TelcoModel> listPaketData;
   final String phoneNumber;
+  final void Function(TelcoType type, TelcoModel selectedProduct) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -454,7 +532,10 @@ class _PaketDataList extends StatelessWidget {
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
-          child: _PaketDataTile(paketData: listPaketData[index]),
+          child: _PaketDataTile(
+            paketData: listPaketData[index],
+            onTap: onTap
+          ),
         );
       }, 
     );
@@ -462,9 +543,13 @@ class _PaketDataList extends StatelessWidget {
 }
 
 class _PaketDataTile extends StatelessWidget {
-  const _PaketDataTile({required this.paketData});
+  const _PaketDataTile({
+    required this.paketData,
+    required this.onTap
+  });
 
   final TelcoModel paketData;
+  final void Function(TelcoType type, TelcoModel selectedProduct) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -475,7 +560,7 @@ class _PaketDataTile extends StatelessWidget {
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(12.0),
           child: InkWell(
-            onTap: () => {},
+            onTap: () => onTap(TelcoType.data, paketData),
             borderRadius: BorderRadius.circular(12.0),
             child: Container(
               padding: paketData.isDiscount ? 
@@ -492,7 +577,7 @@ class _PaketDataTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    paketData.description ?? paketData.nominal,
+                    paketData.description ?? "Kuota ${paketData.nominal} GB",
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600,
@@ -501,7 +586,7 @@ class _PaketDataTile extends StatelessWidget {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    paketData.nominal,
+                    "Kuota ${paketData.nominal.toInt()} GB",
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w400,
@@ -522,7 +607,7 @@ class _PaketDataTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        paketData.price,
+                        formatIdr(paketData.price),
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,

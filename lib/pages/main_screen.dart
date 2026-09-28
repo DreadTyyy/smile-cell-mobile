@@ -3,6 +3,7 @@ import "package:smile_cell/component/bottom_navbar.dart";
 import "package:smile_cell/pages/activity_screen.dart";
 import "package:smile_cell/pages/home_screen.dart";
 import "package:smile_cell/pages/promo_screen.dart";
+import "package:smile_cell/pages/profile_screen.dart";
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -18,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     ActivityScreen(),
     PromoScreen(),
-    _EmptyScreen(title: "Profil"),
+    ProfileScreen(),
   ];
 
   @override
