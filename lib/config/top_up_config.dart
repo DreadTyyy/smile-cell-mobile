@@ -3,8 +3,6 @@ import "package:smile_cell/data/models/payment_model.dart";
 import "package:smile_cell/helpers/navigation.dart";
 import "package:smile_cell/pages/top_up_screen.dart";
 
-const minTopUpAmount = 10000;
-const maxTopUpAmount = 10000000;
 const transferTimeLimit = Duration(hours: 24);
 
 const supportedBanks = <PaymentMethod>[

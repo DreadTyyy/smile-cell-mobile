@@ -1,13 +1,10 @@
 import "dart:async";
-
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:provider/provider.dart";
 import "package:smile_cell/config/top_up_config.dart";
 import "package:smile_cell/config/transaction_config.dart";
 import "package:smile_cell/data/models/payment_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
-import "package:smile_cell/providers/balance_provider.dart";
 
 class TransferScreen extends StatefulWidget {
   const TransferScreen({
@@ -81,10 +78,6 @@ class _TransferScreenState extends State<TransferScreen> {
   void _finish() {
     final messenger = ScaffoldMessenger.of(context);
     final isExpired = _isExpired;
-
-    if (!isExpired) {
-      context.read<BalanceProvider>().topUp(widget.amount);
-    }
 
     _backToHome();
 

@@ -8,9 +8,10 @@ import "package:smile_cell/data/models/telco_model.dart";
 import "package:smile_cell/config/transaction_config.dart";
 import "package:smile_cell/data/models/transaction_model.dart";
 import "package:smile_cell/config/top_up_config.dart";
-import "package:smile_cell/config/send_balance_config.dart";
 import "package:provider/provider.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
+import "package:smile_cell/helpers/navigation.dart";
+import "package:smile_cell/pages/send_balance_screen.dart";
 import "package:smile_cell/providers/balance_provider.dart";
 
 class HomeScreen extends StatefulWidget {
@@ -411,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           size: 24.0,
                         ),
                         label: "Kirim Saldo",
-                        onTap: () => openSendBalanceScreen(context),
+                        onTap: () => pushSlide(context, const SendBalanceScreen()),
                       ),
                     ],
                   ),

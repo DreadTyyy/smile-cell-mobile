@@ -1,13 +1,15 @@
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 import "package:smile_cell/component/bottom_action_bar.dart";
-import "package:smile_cell/config/send_balance_config.dart";
+import "package:smile_cell/config/amount_limit_config.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
 import "package:smile_cell/helpers/navigation.dart";
 import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/send_confirm_screen.dart";
 import "package:smile_cell/providers/balance_provider.dart";
+
+const sendBalanceFee = 0;
 
 class SendAmountScreen extends StatefulWidget {
   const SendAmountScreen({super.key, required this.recipient});
@@ -254,7 +256,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
                     inputFormatters: const [
-                      ThousandsInputFormatter(maxDigits: 9),
+                      ThousandsInputFormatter(maxDigits: amountInputMaxDigits),
                     ],
                     onChanged: (_) => setState(() {}),
                     onSubmitted: (_) {

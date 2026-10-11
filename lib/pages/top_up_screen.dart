@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:smile_cell/config/amount_limit_config.dart";
 import "package:smile_cell/config/top_up_config.dart";
 import "package:smile_cell/data/models/payment_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
@@ -248,7 +249,7 @@ class _AmountSheetState extends State<_AmountSheet> {
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
-                inputFormatters: const [ThousandsInputFormatter(maxDigits: 9)],
+                inputFormatters: const [ThousandsInputFormatter(maxDigits: amountInputMaxDigits)],
                 onSubmitted: (_) {
                   if (_isValid) _submit();
                 },

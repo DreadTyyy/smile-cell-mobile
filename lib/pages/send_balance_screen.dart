@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:smile_cell/component/bottom_action_bar.dart";
-import "package:smile_cell/config/send_balance_config.dart";
+import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/navigation.dart";
 import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/send_amount_screen.dart";
@@ -16,7 +16,6 @@ class SendBalanceScreen extends StatefulWidget {
 class _SendBalanceScreenState extends State<SendBalanceScreen> {
   final _phoneController = TextEditingController();
   PhoneValidationError? _validationError = PhoneValidationError.empty;
-  bool _isNotRegistered = false;
 
   @override
   void dispose() {
@@ -29,7 +28,6 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
   bool get _canContinue => _validationError == null;
 
   String? get _errorText {
-    if (_isNotRegistered) return "Nomor ini belum terdaftar di Smile Cell";
     if (_validationError == PhoneValidationError.invalidPrefix) {
       return "Masukkan nomor handphone yang valid";
     }
@@ -39,17 +37,16 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
   void _onPhoneChanged() {
     setState(() {
       _validationError = PhoneNumberValidator.validate(_digits).error;
-      _isNotRegistered = false;
     });
   }
 
   void _submit() {
-    final recipient = findRecipient(_digits);
-
-    if (recipient == null) {
-      setState(() => _isNotRegistered = true);
-      return;
-    }
+    // TODO: ambil data penerima dari database
+    final recipient = Recipient(
+      id: _digits,
+      name: "Pengguna Smile Cell",
+      phoneNumber: _digits,
+    );
 
     FocusScope.of(context).unfocus();
     pushSlide(context, SendAmountScreen(recipient: recipient));
