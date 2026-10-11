@@ -8,13 +8,17 @@ import "package:smile_cell/pages/bill_screen.dart";
 import "package:smile_cell/pages/splash_screen.dart";
 import "package:smile_cell/providers/auth_provider.dart";
 import "package:smile_cell/pages/main_screen.dart";
+import "package:smile_cell/providers/balance_provider.dart";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => BalanceProvider()),
+      ],
       child: const SmileCell(),
     ),
   );

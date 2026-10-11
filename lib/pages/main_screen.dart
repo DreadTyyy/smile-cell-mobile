@@ -37,38 +37,3 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
-class _EmptyScreen extends StatelessWidget {
-  final String title;
-
-  const _EmptyScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0.0,
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text(
-          "halaman $title belum jadi",
-          style: TextStyle(
-            fontSize: 14.0,
-            color: Colors.black.withValues(alpha: 0.5),
-          ),
-        ),
-      ),
-    );
-  }
-}
