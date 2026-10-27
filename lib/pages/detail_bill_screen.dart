@@ -7,11 +7,13 @@ class DetailBillScreen extends StatefulWidget {
   const DetailBillScreen({
     super.key,
     required this.detail,
-    required this.product
+    required this.product,
+    this.onPay,
   });
 
   final DetailBillModel detail;
   final BillProduct product;
+  final VoidCallback? onPay;
 
   @override
   State<DetailBillScreen> createState() => _DetailBillScreenState();
@@ -232,7 +234,7 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
                 width: double.infinity,
                 height: 54.0,
                 child: ElevatedButton(
-                  onPressed: () => {},
+                  onPressed: widget.onPay ?? () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     padding: const EdgeInsets.symmetric(
