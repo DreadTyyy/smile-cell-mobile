@@ -1,3 +1,6 @@
+// TODO: koneksi api cek apakah nomor terdaftar
+// TODO: ambil data dari be sebagai parameter send_confirm_screen
+
 import "package:flutter/material.dart";
 import "package:smile_cell/component/bottom_action_bar.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";

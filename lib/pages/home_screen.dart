@@ -215,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(16.0),
         child: Container(
           width: double.infinity,
-          color: Theme.of(context).colorScheme.surface,
+          color: Colors.white,
           padding: EdgeInsets.all(12.0),
           child: _pendingTransactions.isEmpty
               ? _buildEmptyTransaction()

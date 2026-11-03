@@ -28,7 +28,7 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
         "value": formatIdr(widget.detail.price)
       },
       {
-        "key": "Layanan",
+        "key": "Biaya Admin",
         "value": widget.detail.fee == 0 ? "Gratis" : formatIdr(widget.detail.fee)
       },
       {
