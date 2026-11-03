@@ -1,28 +1,48 @@
+// TODO: koneksi api untuk cek pin dan kirim request kirim saldo
+// TODO: ambil data response sebagai parameter detail_receipt_screen
+// TODO: handle error response dari api kirim saldo
+
 import "package:flutter/material.dart";
+import "package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart";
 import "package:smile_cell/data/models/detail_bill_model.dart";
+import "package:smile_cell/data/models/invoice_model.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
+import "package:smile_cell/helpers/navigation.dart";
 import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/detail_bill_screen.dart";
+import "package:smile_cell/pages/detail_receipt_screen.dart";
 
 class SendConfirmScreen extends StatelessWidget {
   const SendConfirmScreen({super.key, required this.summary});
 
   final SendBalanceSummary summary;
 
-  void _pay(BuildContext context) {
-    final messenger = ScaffoldMessenger.of(context);
+  void _pay(BuildContext context) async {
+    final pinOk = await showPinBottomSheet(context); 
+    if (pinOk != true) return;
 
-    Navigator.of(context).popUntil((route) => route.isFirst);
-
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          "Saldo ${formatRupiah(summary.total)} berhasil dikirim "
-          "ke ${summary.recipient.name}",
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
+    if (!context.mounted) return;
+    pushSlide(
+      context, 
+      DetailReceiptScreen(
+        data: InvoiceModel(
+          product: BillProduct(
+            name: summary.recipient.phoneNumber,
+            description: summary.recipient.name,
+            imageAsset: "profile_default.png",
+          ), 
+          detail: DetailBillModel(
+            information: [],
+            price: summary.amount.toDouble(),
+            fee: summary.fee.toDouble(),
+            discount: 0,
+          ), 
+          transactionId: "AJKLAJLAAJLK", 
+          dateTime: DateTime.now(), 
+          invoiceType: InvoiceType.sendBalance
+        )
+      )
     );
   }
 
@@ -32,7 +52,7 @@ class SendConfirmScreen extends StatelessWidget {
       product: BillProduct(
         name: "Kirim Saldo",
         description: summary.recipient.name,
-        imageAsset: "Vector.png",
+        imageAsset: "profile_default.png",
       ),
       detail: DetailBillModel(
         information: [

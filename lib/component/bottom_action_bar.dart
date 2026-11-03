@@ -14,7 +14,7 @@ class BottomActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      color: Theme.of(context).colorScheme.surface,
       padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 16.0),
       child: SafeArea(
         top: false,
