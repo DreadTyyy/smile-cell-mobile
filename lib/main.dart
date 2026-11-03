@@ -1,6 +1,5 @@
-// TODO: Membuat splashscreen, input no hp screen, input pin screen, input otp screen, input data diri screen
-
 import "package:flutter/material.dart";
+import 'package:intl/date_symbol_data_local.dart';
 import "package:provider/provider.dart";
 import "package:smile_cell/config/bill_config.dart";
 import "package:smile_cell/pages/login_screen.dart";
@@ -12,7 +11,10 @@ import "package:smile_cell/providers/balance_provider.dart";
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting("id_ID", null);
+
   runApp(
     MultiProvider(
       providers: [
@@ -38,7 +40,7 @@ class SmileCell extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color(0xFF2C93CB),
           primary: Color(0xFF2C93CB),
-          surface: Color(0xFFF5F9FC),
+          surface: Color(0xFFF1F3F5),
           error: Color(0xFFDC2626)
         )
       ),
