@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart';
 import 'package:smile_cell/component/tab_bar_section.dart';
 import 'package:smile_cell/data/models/detail_bill_model.dart';
+import 'package:smile_cell/data/models/invoice_model.dart';
 import 'package:smile_cell/data/models/telco_model.dart';
 import 'package:smile_cell/helpers/formatCurrency.dart';
 import 'package:smile_cell/helpers/navigation.dart';
 import 'package:smile_cell/pages/detail_bill_screen.dart';
+import 'package:smile_cell/pages/detail_receipt_screen.dart';
 import 'package:smile_cell/services/phone_provider_detector.dart';
 import 'package:smile_cell/services/validation/phone_number_validator.dart';
 
@@ -85,6 +88,41 @@ class _TelcoScreenState extends State<TelcoScreen>
     }
   }
 
+  bool _handlePayPaketData(String pin) {
+    if (pin == "123456") {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _handlePaymentTelcoFlow(
+    BuildContext context, 
+    BillProduct product,
+    DetailBillModel detail,
+  ) async {
+    final isPaymentSucces = await showPinBottomSheet(context, _handlePayPaketData);
+    if (isPaymentSucces != true) return;
+
+    if (!context.mounted) return;
+    pushSlide(
+      context, 
+      DetailReceiptScreen(
+        data: InvoiceModel(
+          product: BillProduct(
+            // dari onsubmitbill provider ada di desc dan type ada di name
+            name: product.description, 
+            description: product.name,
+            imageAsset: product.imageAsset,
+          ), 
+          detail: detail, 
+          transactionId: "AJKLAJLAAJLK", 
+          dateTime: DateTime.now(), 
+          invoiceType: InvoiceType.package
+        )
+      )
+    );
+  } 
+
   void _submitPaketData(BillProduct product, TelcoModel selectProduct) {
     final detail = DetailBillModel(
       information: [
@@ -101,7 +139,8 @@ class _TelcoScreenState extends State<TelcoScreen>
       context, 
       DetailBillScreen(
         detail: detail,
-        product: product
+        product: product,
+        onPay: (context) => _handlePaymentTelcoFlow(context, product, detail)
       )
     );
   }
@@ -119,7 +158,8 @@ class _TelcoScreenState extends State<TelcoScreen>
       context, 
       DetailBillScreen(
         detail: detail,
-        product: product
+        product: product,
+         onPay: (context) => _handlePaymentTelcoFlow(context, product, detail)
       )
     );
   }

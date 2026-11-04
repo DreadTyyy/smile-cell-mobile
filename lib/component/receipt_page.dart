@@ -83,43 +83,45 @@ class _ReceiptPageState extends State<ReceiptPage> {
                             "assets/${widget.data.product.imageAsset}",
                             width: double.infinity,
                             height: double.infinity,
-                            fit: BoxFit.cover
+                            fit: BoxFit.contain
                           )
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.data.product.description,
-                            style: TextStyle(
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.w500,
-                              height: 1.2,
-                            )
-                          ),
-                          Row(
-                            spacing: 4.0,
-                            children: [
-                              Text(
-                                widget.data.product.name,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF727272)
-                                )
-                              ),
-                              Text(
-                                widget.data.customerIdentifier,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF727272)
-                                )
-                              ),
-                            ]
-                          ),
-                        ]
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.data.product.description,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w500,
+                                height: 1.2,
+                              )
+                            ),
+                            Row(
+                              spacing: 4.0,
+                              children: [
+                                Text(
+                                  widget.data.product.name,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF727272)
+                                  )
+                                ),
+                                Text(
+                                  widget.data.customerIdentifier,
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFF727272)
+                                  )
+                                ),
+                              ]
+                            ),
+                          ]
+                        ),
                       )
                     ]
                   ),
@@ -184,7 +186,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
               ),
             )
           ),
-
+    
           // FOOTER
           SizedBox(height: 24.0),
           Text(

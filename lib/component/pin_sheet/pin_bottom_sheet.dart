@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:smile_cell/component/pin_sheet/pin_dots.dart';
 import 'package:smile_cell/widgets/keypad/numeric_keypad.dart';
 
-Future<bool> showPinBottomSheet(BuildContext context) async {
+Future<bool> showPinBottomSheet(
+  BuildContext context,
+  Function(String pin) onPinSubmitted
+) async {
   final sheet = await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -13,14 +16,19 @@ Future<bool> showPinBottomSheet(BuildContext context) async {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))
     ),
-    builder: (context) => PinBottomSheet()
+    builder: (context) => PinBottomSheet(onPinSubmitted: onPinSubmitted)
   );
 
   return sheet ?? false;
 }
 
 class PinBottomSheet extends StatefulWidget {
-  const PinBottomSheet({super.key});
+  const PinBottomSheet({
+    super.key,
+    required this.onPinSubmitted
+  });
+
+  final Function(String pin) onPinSubmitted;
 
   @override
   State<PinBottomSheet> createState() => _PinBottomSheetState();
@@ -44,7 +52,8 @@ class _PinBottomSheetState extends State<PinBottomSheet> {
     });
 
     if (currentPin.length == pinLength) {
-      if (currentPin == "123456") {
+      final isSuccess = widget.onPinSubmitted(currentPin);
+      if (isSuccess) {
         Navigator.of(context).pop(true);
       } else {
         setState(() {

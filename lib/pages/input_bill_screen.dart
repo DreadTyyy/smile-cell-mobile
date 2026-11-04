@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart';
 import 'package:smile_cell/data/models/bill_model.dart';
 import 'package:smile_cell/data/models/detail_bill_model.dart';
+import 'package:smile_cell/data/models/invoice_model.dart';
 import 'package:smile_cell/helpers/navigation.dart';
 import 'package:smile_cell/pages/detail_bill_screen.dart';
+import 'package:smile_cell/pages/detail_receipt_screen.dart';
 
 class InputBillScreen extends StatefulWidget {
   const InputBillScreen({
@@ -43,6 +46,49 @@ class _InputBillScreenState extends State<InputBillScreen> {
     return null;
   }
 
+  bool _handlePayBill(String pin) {
+    if (pin == "123456") {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<void> _handlePaymentBillFlow(
+    BuildContext context,
+    BillProduct product,
+    DetailBillModel detail,
+  ) async {
+    final isPaymentSuccess = await showPinBottomSheet(context, _handlePayBill);
+    if (isPaymentSuccess != true) return;
+
+    if (!context.mounted) return;
+    InvoiceType invoiceType;
+    switch (widget.biller.id) {
+      case "pln":
+        invoiceType = InvoiceType.pln;
+        break;
+      case "pdam":
+        invoiceType = InvoiceType.pdam;
+        break;
+      // default untuk bpjs jika bukan pln atau pdam
+      default:
+        invoiceType = InvoiceType.bpjs;
+    }
+    pushSlide(
+      context, 
+      DetailReceiptScreen(
+        data: InvoiceModel(
+          product: product, 
+          detail: detail, 
+          transactionId: "AJKLAJLAAJLK", 
+          dateTime: DateTime.now(), 
+          invoiceType: invoiceType
+        )
+      )
+    );
+  }
+
   void _submitCheckBill() {
     if (_formKey.currentState?.validate() != true) return;
 
@@ -68,7 +114,8 @@ class _InputBillScreenState extends State<InputBillScreen> {
       context,
       DetailBillScreen(
         product: product,
-        detail: detail
+        detail: detail,
+        onPay: (context) => _handlePaymentBillFlow(context, product, detail)
       )
     );
   }

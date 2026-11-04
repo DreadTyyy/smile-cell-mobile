@@ -32,11 +32,14 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
     setState(() => _isSharing = true);
 
     try {
-      final imageBytes = await _screenshotController.captureFromWidget(
-        Material(
-          color: Colors.white,
-          child: ReceiptPage(
-            data: widget.data
+      final imageBytes = await _screenshotController.captureFromLongWidget(
+        InheritedTheme.captureAll(
+          context,
+            Material(
+            color: Colors.white,
+            child: ReceiptPage(
+              data: widget.data
+            )
           )
         ),
         context: context,
@@ -181,50 +184,54 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                spacing: 8.0,
-                                children: [
-                                  Container(
-                                    width: 48.0,
-                                    height: 48.0,
-                                    // Flag kirim saldo yaitu tanpa ada detail tagihan maka padding 0
-                                    padding: widget.data.detail.information.isNotEmpty ? 
-                                      EdgeInsets.all(8.0) : EdgeInsets.zero,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFF2F8FD),
-                                      shape: BoxShape.circle
-                                    ),
-                                    child: ClipOval(
-                                      child: Image.asset(
-                                        "assets/${widget.data.product.imageAsset}",
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        fit: BoxFit.cover
-                                      )
-                                    ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        widget.data.product.description,
-                                        style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2
+                              Expanded(
+                                child: Row(
+                                  spacing: 8.0,
+                                  children: [
+                                    Container(
+                                      width: 48.0,
+                                      height: 48.0,
+                                      // Flag kirim saldo yaitu tanpa ada detail tagihan maka padding 0
+                                      padding: widget.data.detail.information.isNotEmpty ? 
+                                        EdgeInsets.all(8.0) : EdgeInsets.zero,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF2F8FD),
+                                        shape: BoxShape.circle
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.asset(
+                                          "assets/${widget.data.product.imageAsset}",
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.contain
                                         )
                                       ),
-                                      Text(
-                                        widget.data.product.name,
-                                        style: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xFF727272)
-                                        )
-                                      )
-                                    ]
-                                  )
-                                ]
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            widget.data.product.description,
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.2
+                                            )
+                                          ),
+                                          Text(
+                                            widget.data.product.name,
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color(0xFF727272)
+                                            )
+                                          )
+                                        ]
+                                      ),
+                                    )
+                                  ]
+                                ),
                               ),
                               Container(
                                 padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),

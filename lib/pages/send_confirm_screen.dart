@@ -18,9 +18,16 @@ class SendConfirmScreen extends StatelessWidget {
 
   final SendBalanceSummary summary;
 
-  void _pay(BuildContext context) async {
-    final pinOk = await showPinBottomSheet(context); 
-    if (pinOk != true) return;
+  bool _handlePaymentBalance(String pin) {
+    if (pin == "123456") {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _pay(BuildContext context) async {
+    final isPaymentSuccess = await showPinBottomSheet(context, _handlePaymentBalance); 
+    if (isPaymentSuccess != true) return;
 
     if (!context.mounted) return;
     pushSlide(
@@ -72,7 +79,7 @@ class SendConfirmScreen extends StatelessWidget {
         fee: summary.fee.toDouble(),
         discount: 0,
       ),
-      onPay: () => _pay(context),
+      onPay: (context) => _pay(context),
     );
   }
 }
