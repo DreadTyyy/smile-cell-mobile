@@ -9,7 +9,6 @@ import "package:smile_cell/data/models/invoice_model.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
 import "package:smile_cell/helpers/navigation.dart";
-import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/detail_bill_screen.dart";
 import "package:smile_cell/pages/detail_receipt_screen.dart";
 
@@ -65,10 +64,7 @@ class SendConfirmScreen extends StatelessWidget {
         information: [
           BillInformation(
             key: "Nomor Handphone",
-            value: formatPhoneNumber(
-              summary.recipient.phoneNumber,
-              separator: " ",
-            ),
+            value: (summary.recipient.phoneNumber),
           ),
           BillInformation(
             key: "Nominal Kirim",

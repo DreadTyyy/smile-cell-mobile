@@ -2,10 +2,10 @@
 // TODO: ambil data dari be sebagai parameter send_confirm_screen
 
 import "package:flutter/material.dart";
+import "package:flutter/services.dart";
 import "package:smile_cell/component/bottom_action_bar.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/navigation.dart";
-import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/send_amount_screen.dart";
 import "package:smile_cell/services/validation/phone_number_validator.dart";
 
@@ -26,8 +26,6 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
     super.dispose();
   }
 
-  String get _digits => digitsOnly(_phoneController.text);
-
   bool get _canContinue => _validationError == null;
 
   String? get _errorText {
@@ -39,16 +37,16 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
 
   void _onPhoneChanged() {
     setState(() {
-      _validationError = PhoneNumberValidator.validate(_digits).error;
+      _validationError = PhoneNumberValidator.validate(_phoneController.text).error;
     });
   }
 
   void _submit() {
     // TODO: ambil data penerima dari database
     final recipient = Recipient(
-      id: _digits,
+      id: _phoneController.text,
       name: "Pengguna Smile Cell",
-      phoneNumber: _digits,
+      phoneNumber: _phoneController.text,
     );
 
     FocusScope.of(context).unfocus();
@@ -112,7 +110,10 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
                     autofocus: true,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
-                    inputFormatters: const [PhoneInputFormatter()],
+                    inputFormatters:  [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(12)
+                    ],
                     onChanged: (_) => _onPhoneChanged(),
                     onSubmitted: (_) {
                       if (_canContinue) _submit();
@@ -123,7 +124,7 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
                       letterSpacing: 0.5,
                     ),
                     decoration: InputDecoration(
-                      hintText: "0812-3456-7890",
+                      hintText: "081234567890",
                       hintStyle: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w500,

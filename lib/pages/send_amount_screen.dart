@@ -7,7 +7,6 @@ import "package:smile_cell/config/amount_limit_config.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/currency_formatter.dart";
 import "package:smile_cell/helpers/navigation.dart";
-import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/send_confirm_screen.dart";
 import "package:smile_cell/providers/balance_provider.dart";
 
@@ -171,7 +170,7 @@ class _SendAmountScreenState extends State<SendAmountScreen> {
                     ),
                     const SizedBox(height: 2.0),
                     Text(
-                      formatPhoneNumber(widget.recipient.phoneNumber),
+                      (widget.recipient.phoneNumber),
                       style: TextStyle(
                         fontSize: 13.0,
                         color: Colors.black.withValues(alpha: 0.6),

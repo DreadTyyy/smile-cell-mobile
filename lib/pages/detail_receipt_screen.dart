@@ -100,10 +100,12 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           // surfaceTintColor: Colors.transparent,
-          automaticallyImplyLeading: false,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          elevation: 0,
+          elevation: 0.0,
           foregroundColor: Colors.black,
+          automaticallyImplyLeading: false,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0.0,
           title: Text(
             "Rincian Transaksi",
             style: TextStyle(
