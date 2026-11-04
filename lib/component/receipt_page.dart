@@ -3,17 +3,24 @@ import "dart:ui" as ui;
 import "package:dotted_line/dotted_line.dart";
 import "package:flutter/material.dart";
 import "package:smile_cell/component/invoice_watermark.dart";
-import "package:smile_cell/data/models/invoice_model.dart";
+import "package:smile_cell/data/models/detail_bill_model.dart";
+import "package:smile_cell/data/models/transaction_model.dart";
 import "package:smile_cell/helpers/date_formatter.dart";
-import "package:smile_cell/helpers/formatCurrency.dart";
+import "package:smile_cell/helpers/format_currency.dart";
 
 class ReceiptPage extends StatefulWidget {
   const ReceiptPage({
     super.key,
+    required this.title,
+    required this.subtitle,
+    required this.subsubtitle,
     required this.data
   });
 
-  final InvoiceModel data;
+  final String title;
+  final String subtitle;
+  final String subsubtitle;
+  final TransactionModel data;
 
   @override
   State<ReceiptPage> createState() => _ReceiptPageState();
@@ -72,7 +79,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                       Container(
                         width: 48.0,
                         height: 48.0,
-                        padding: widget.data.detail.information.isNotEmpty ? 
+                        padding: widget.data.bill.product.category != BillType.sendBalance ? 
                           EdgeInsets.all(8.0) : EdgeInsets.zero,
                         decoration: BoxDecoration(
                           color: Color(0xFFF2F8FD),
@@ -80,7 +87,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                         ),
                         child: ClipOval(
                           child: Image.asset(
-                            "assets/${widget.data.product.imageAsset}",
+                            widget.data.bill.product.imagePath,
                             width: double.infinity,
                             height: double.infinity,
                             fit: BoxFit.contain
@@ -92,7 +99,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.data.product.description,
+                              widget.title,
                               style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w500,
@@ -100,20 +107,28 @@ class _ReceiptPageState extends State<ReceiptPage> {
                               )
                             ),
                             Row(
-                              spacing: 4.0,
+                              spacing: 2.0,
                               children: [
                                 Text(
-                                  widget.data.product.name,
+                                widget.subtitle,
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: 15.0,
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF727272)
                                   )
                                 ),
                                 Text(
-                                  widget.data.customerIdentifier,
+                                  "•",
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF727272)
+                                  )
+                                ),
+                                Text(
+                                  widget.subsubtitle,
+                                  style: TextStyle(
+                                    fontSize: 15.0,
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF727272)
                                   )
@@ -139,7 +154,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
                   // CONTENT
                   SizedBox(height: 16.0),
                   Text(
-                    formatIdr(widget.data.detail.price + widget.data.detail.fee - widget.data.detail.discount),
+                    formatIdr(widget.data.bill.payment.totalAmount),
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
@@ -152,19 +167,20 @@ class _ReceiptPageState extends State<ReceiptPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _DetailInformation(title: "No Referensi", value: widget.data.transactionId),
-                      _DetailInformation(title: "Tanggal", value: formatFullDate(widget.data.dateTime)),
-                      _DetailInformation(title: "Waktu", value: formatTime(widget.data.dateTime)),
+                      _DetailInformation(title: "No Referensi", value: widget.data.id),
+                      _DetailInformation(title: "Tanggal", value: formatFullDate(widget.data.date)),
+                      _DetailInformation(title: "Waktu", value: formatTime(widget.data.date)),
                     ]
                   ),
                   SizedBox(height: 16.0),
       
-                  widget.data.detail.information.isNotEmpty ?
+                  // Kirim saldo tidak perlu tampilan detail tagihan
+                  widget.data.bill.product.category != BillType.sendBalance ?
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _TitleListDetail(title: "DETAIL TAGIHAN"),
-                      ...widget.data.detail.information.map((info) {
+                      ...widget.data.bill.details.informations.map((info) {
                         return _DetailInformation(
                           title: info.key,
                           value: info.value

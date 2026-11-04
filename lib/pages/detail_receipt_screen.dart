@@ -6,17 +6,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smile_cell/component/receipt_page.dart';
-import 'package:smile_cell/data/models/invoice_model.dart';
+import 'package:smile_cell/data/models/detail_bill_model.dart';
+import 'package:smile_cell/data/models/transaction_model.dart';
 import 'package:smile_cell/helpers/date_formatter.dart';
-import 'package:smile_cell/helpers/formatCurrency.dart';
+import 'package:smile_cell/helpers/format_currency.dart';
 
 class DetailReceiptScreen extends StatefulWidget {
   const DetailReceiptScreen({
     super.key,
+    required this.title,
+    required this.subtitle,
     required this.data
   });
 
-  final InvoiceModel data;
+  final String title;
+  final String subtitle;
+  final TransactionModel data;
 
   @override
   State<DetailReceiptScreen> createState() => _DetailReceiptScreenState();
@@ -32,12 +37,17 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
     setState(() => _isSharing = true);
 
     try {
+      BillDetail billDetail = widget.data.bill.details;
+
       final imageBytes = await _screenshotController.captureFromLongWidget(
         InheritedTheme.captureAll(
           context,
             Material(
             color: Colors.white,
             child: ReceiptPage(
+              title: widget.title,
+              subtitle: widget.subtitle,
+              subsubtitle: billDetail is SendBalanceDetail ? billDetail.customerAgent : billDetail.targetNumber,
               data: widget.data
             )
           )
@@ -48,7 +58,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
       );
 
       final directory = await getTemporaryDirectory();
-      final file = File("${directory.path}/invoice_${widget.data.transactionId}.png");
+      final file = File("${directory.path}/invoice_${widget.data.id}.png");
       await file.writeAsBytes(imageBytes, flush: true);
 
       await SharePlus.instance.share(
@@ -56,7 +66,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
           files: [
             XFile(file.path, mimeType: "image/png")
           ],
-          text: "Test"
+          text: "Bukti transaksi"
         )
       );
     } catch (e) {
@@ -77,15 +87,15 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
     final detailPrices = [
       {
         "key": "Harga",
-        "value": formatIdr(widget.data.detail.price)
+        "value": formatIdr(widget.data.bill.payment.amount)
       },
       {
         "key": "Biaya Admin",
-        "value": widget.data.detail.fee == 0 ? "Gratis" : formatIdr(widget.data.detail.fee)
+        "value": widget.data.bill.payment.fee == 0 ? "Gratis" : formatIdr(widget.data.bill.payment.fee)
       },
       {
         "key": "Diskon",
-        "value": widget.data.detail.discount == 0 ? 0 : formatIdr(widget.data.detail.discount)
+        "value": widget.data.bill.payment.discount == 0 ? 0 : formatIdr(widget.data.bill.payment.discount)
       },
     ];
 
@@ -130,13 +140,14 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
               child: Column(
                 children: [
                   // HEADER
+                  widget.data.status == TransactionStatus.success ? 
                   Image.asset(
                     "assets/splash_success.png",
                     width: 180.0
-                  ),
+                  ) : SizedBox.shrink(),
                   SizedBox(height: 20.0),
                   Text(
-                    "Transaksi Berhasil",
+                    "Transaksi ${widget.data.status == TransactionStatus.success ? "Berhasil" : widget.data.status == TransactionStatus.pending ? "Sedang Diproses" : "Gagal"}",
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w600
@@ -148,7 +159,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                     spacing: 4.0,
                     children: [
                       Text(
-                        formatFullDate(widget.data.dateTime),
+                        formatFullDate(widget.data.date),
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
@@ -156,7 +167,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                         )
                       ),
                       Text(
-                        formatTime(widget.data.dateTime),
+                        formatTime(widget.data.date),
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w400,
@@ -191,10 +202,10 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                   spacing: 8.0,
                                   children: [
                                     Container(
-                                      width: 48.0,
-                                      height: 48.0,
-                                      // Flag kirim saldo yaitu tanpa ada detail tagihan maka padding 0
-                                      padding: widget.data.detail.information.isNotEmpty ? 
+                                      width: 44.0,
+                                      height: 44.0,
+                                      // Padding untuk kirim saldo dihilangkan karena gambar sudah berbentuk lingkaran
+                                      padding: widget.data.bill.product.category != BillType.sendBalance ? 
                                         EdgeInsets.all(8.0) : EdgeInsets.zero,
                                       decoration: BoxDecoration(
                                         color: Color(0xFFF2F8FD),
@@ -202,7 +213,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                       ),
                                       child: ClipOval(
                                         child: Image.asset(
-                                          "assets/${widget.data.product.imageAsset}",
+                                          "assets/${widget.data.bill.product.imageAsset}",
                                           width: double.infinity,
                                           height: double.infinity,
                                           fit: BoxFit.contain
@@ -214,7 +225,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            widget.data.product.description,
+                                            widget.title,
                                             style: TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.w600,
@@ -222,7 +233,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                             )
                                           ),
                                           Text(
-                                            widget.data.product.name,
+                                            widget.subtitle,
                                             style: TextStyle(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w400,
@@ -235,6 +246,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                   ]
                                 ),
                               ),
+                              widget.data.status == TransactionStatus.success ?
                               Container(
                                 padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
                                 decoration: BoxDecoration(
@@ -249,17 +261,18 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                                     color: Color(0xFF00C853)
                                   )
                                 )
-                              )
+                              ) : SizedBox.shrink()
                             ],
                           ),
-      
-                          widget.data.detail.information.isNotEmpty ?
+
+                          // Kirim saldo tidak perlu tampilan detail tagihan
+                          widget.data.bill.product.category != BillType.sendBalance ?
                           Column(
                             spacing: 8.0,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _TitleListDetail(title: "DETAIL TAGIHAN"),
-                              ...widget.data.detail.information.map((info) {
+                              ...widget.data.bill.details.informations.map((info) {
                                 return _DetailInformation(
                                   title: info.key,
                                   value: info.value
@@ -273,7 +286,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _TitleListDetail(title: "DETAIL PEMBAYARAN"),
-                              _DetailInformation(title: "No Referensi", value: widget.data.transactionId),
+                              _DetailInformation(title: "No Referensi", value: widget.data.id),
                               ...detailPrices.map((item) {
                                 if (item['key'] == "Diskon" && item['value'] == 0) return SizedBox();
                     
@@ -310,7 +323,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                             )
                           ),
                           Text(
-                            formatIdr(widget.data.detail.price + widget.data.detail.fee - widget.data.detail.discount),
+                            formatIdr(widget.data.bill.payment.totalAmount),
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w700,
@@ -358,8 +371,10 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                             )
                           )
                         ),
+
+                        widget.data.status == TransactionStatus.success ?
                         ElevatedButton.icon(
-                          onPressed: _isSharing ? null : _shareReceipt,
+                          onPressed: widget.data.status == TransactionStatus.success && _isSharing ? null : _shareReceipt,
                           icon: _isSharing
                           ? const SizedBox(
                               width: 20.0,
@@ -388,7 +403,7 @@ class _DetailReceiptScreenState extends State<DetailReceiptScreen> {
                               borderRadius: BorderRadius.circular(8.0)
                             )
                           )
-                        )
+                        ) : SizedBox.shrink()
                       ]
                     ),
                   )

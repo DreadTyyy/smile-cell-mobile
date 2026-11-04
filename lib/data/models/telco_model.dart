@@ -21,22 +21,22 @@ enum TelcoType {
 class TelcoModel {
   final String id;
   final TelcoType type;
-  final double nominal;
-  final double price;
-  final String provider;
+  final int nominal; // jumlah kuota atau pulsa
+  final int amount;
+  final ProviderModel provider;
   final String? description;
   final bool isDiscount;
-  final double? priceDiscount;
+  final int? amountDiscount;
 
   const TelcoModel({
     required this.id,
     required this.type,
     required this.nominal,
-    required this.price,
+    required this.amount,
     required this.provider,
     this.description,
     required this.isDiscount,
-    this.priceDiscount,
+    this.amountDiscount,
 
   });
 }

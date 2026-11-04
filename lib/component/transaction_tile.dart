@@ -12,7 +12,7 @@ class TransactionTile extends StatelessWidget {
   });
 
   String get _formattedDate {
-    final date = transaction.dateTime;
+    final date = transaction.date;
     final day = date.day.toString().padLeft(2, "0");
     final month = date.month.toString().padLeft(2, "0");
     final hour = date.hour.toString().padLeft(2, "0");
@@ -51,11 +51,11 @@ class TransactionTile extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: "${transaction.billerName} ",
+                        text: "${transaction.bill.product.name} ",
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       TextSpan(
-                        text: transaction.number,
+                        text: transaction.id,
                         style: const TextStyle(fontWeight: FontWeight.w400),
                       ),
                     ],

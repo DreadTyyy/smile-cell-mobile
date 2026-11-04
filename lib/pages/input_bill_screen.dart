@@ -1,9 +1,11 @@
+// TODO: Penyesuaian model biller dengan model transaction/inquiry
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart';
 import 'package:smile_cell/data/models/bill_model.dart';
 import 'package:smile_cell/data/models/detail_bill_model.dart';
-import 'package:smile_cell/data/models/invoice_model.dart';
+import 'package:smile_cell/data/models/transaction_model.dart';
 import 'package:smile_cell/helpers/navigation.dart';
 import 'package:smile_cell/pages/detail_bill_screen.dart';
 import 'package:smile_cell/pages/detail_receipt_screen.dart';
@@ -56,34 +58,23 @@ class _InputBillScreenState extends State<InputBillScreen> {
 
   Future<void> _handlePaymentBillFlow(
     BuildContext context,
-    BillProduct product,
-    DetailBillModel detail,
+    BillInquiry bill,
   ) async {
     final isPaymentSuccess = await showPinBottomSheet(context, _handlePayBill);
     if (isPaymentSuccess != true) return;
 
     if (!context.mounted) return;
-    InvoiceType invoiceType;
-    switch (widget.biller.id) {
-      case "pln":
-        invoiceType = InvoiceType.pln;
-        break;
-      case "pdam":
-        invoiceType = InvoiceType.pdam;
-        break;
-      // default untuk bpjs jika bukan pln atau pdam
-      default:
-        invoiceType = InvoiceType.bpjs;
-    }
+    
     pushSlide(
       context, 
       DetailReceiptScreen(
-        data: InvoiceModel(
-          product: product, 
-          detail: detail, 
-          transactionId: "AJKLAJLAAJLK", 
-          dateTime: DateTime.now(), 
-          invoiceType: invoiceType
+        title: widget.biller.name,
+        subtitle: widget.biller.name.split(" ")[0],
+        data: TransactionModel(
+          id: "AJKLAJLAAJLK", 
+          bill: bill,
+          date: DateTime.now(), 
+          status: TransactionStatus.success,
         )
       )
     );
@@ -95,27 +86,56 @@ class _InputBillScreenState extends State<InputBillScreen> {
     FocusScope.of(context).unfocus(); 
     // TODO: Fungsi untuk cek tagihan user
 
-    final product = BillProduct(
-      name: widget.biller.name.split(" ")[0],
-      description: widget.biller.name,
-      imageAsset: widget.biller.logoAsset
-    );
-    final detail = DetailBillModel(
-      information: [
-        BillInformation(key: "Nomor Pelanggan", value: _controller.text),
-        BillInformation(key: "Nama", value: "Zaky"),
-      ],
-      price: 100000,
-      discount: 5000,
-      fee: 2500
+    BillType billType;
+    BillDetail details;
+    switch (widget.biller.id) {
+      case "pln":
+        billType = BillType.pln;
+        details = PlnDetail(
+          customerId: _controller.text,
+          customerName: "Zaky",
+        );
+        break;
+      case "pdam":
+        billType = BillType.pdam;
+        details = PdamDetail(
+          customerId: _controller.text,
+          customerName: "Zaky",
+          // TODO: region diambil dari server, sementara ini hardcode 
+          region: "Bandung",
+        );
+        break;
+      // default untuk bpjs jika bukan pln atau pdam
+      default:
+        billType = BillType.bpjs;
+        details = BpjsDetail(
+          customerId: _controller.text,
+          customerName: "Zaky",
+        );
+    }
+
+    final bill = BillInquiry(
+      product: BillProduct(
+        name: widget.biller.name.split(" ")[0],
+        description: widget.biller.name,
+        imageAsset: widget.biller.logoAsset,
+        category: billType,
+      ),
+      details: details,
+      payment: PaymentSummary(
+        amount: 100000,
+        fee: 2500,
+        discount: 5000
+      )
     );
 
     pushSlide(
       context,
       DetailBillScreen(
-        product: product,
-        detail: detail,
-        onPay: (context) => _handlePaymentBillFlow(context, product, detail)
+        title: "Tagihan ${widget.biller.name.split(" ")[0]}",
+        subtitle: widget.biller.name,
+        bill: bill,
+        onPay: (context) => _handlePaymentBillFlow(context, bill)
       )
     );
   }

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:smile_cell/config/transaction_config.dart";
 import "package:smile_cell/data/models/transaction_model.dart";
+import "package:smile_cell/helpers/format_currency.dart";
 
 class ActivityTile extends StatelessWidget {
   final TransactionModel transaction;
@@ -47,11 +48,11 @@ class ActivityTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset(
-                  transaction.logoPath,
+                  transaction.bill.product.imagePath,
                   width: 36.0,
                   height: 36.0,
                   fit: BoxFit.contain,
-                  semanticLabel: "Logo ${transaction.billerName}",
+                  semanticLabel: "Logo ${transaction.bill.product.name}",
                 ),
                 const SizedBox(width: 12.0),
                 Expanded(
@@ -59,7 +60,7 @@ class ActivityTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        transaction.billerName,
+                        transaction.bill.product.name,
                         style: const TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
@@ -70,7 +71,7 @@ class ActivityTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2.0),
                       Text(
-                        "ID: ${transaction.number}",
+                        "ID: ${transaction.id}",
                         style: TextStyle(
                           fontSize: 14.0,
                           color: Colors.black,
@@ -80,7 +81,7 @@ class ActivityTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2.0),
                       Text(
-                        formatTransactionDate(transaction.dateTime),
+                        formatTransactionDate(transaction.date),
                         style: TextStyle(
                           fontSize: 14.0,
                           color: Colors.black.withValues(alpha: 0.5),
@@ -95,7 +96,7 @@ class ActivityTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      transaction.formattedAmount,
+                      formatIdr(transaction.bill.payment.totalAmount),
                       style: const TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.w600,

@@ -5,9 +5,8 @@
 import "package:flutter/material.dart";
 import "package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart";
 import "package:smile_cell/data/models/detail_bill_model.dart";
-import "package:smile_cell/data/models/invoice_model.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
-import "package:smile_cell/helpers/currency_formatter.dart";
+import "package:smile_cell/data/models/transaction_model.dart";
 import "package:smile_cell/helpers/navigation.dart";
 import "package:smile_cell/pages/detail_bill_screen.dart";
 import "package:smile_cell/pages/detail_receipt_screen.dart";
@@ -32,21 +31,31 @@ class SendConfirmScreen extends StatelessWidget {
     pushSlide(
       context, 
       DetailReceiptScreen(
-        data: InvoiceModel(
-          product: BillProduct(
-            name: summary.recipient.phoneNumber,
-            description: summary.recipient.name,
-            imageAsset: "profile_default.png",
+        title: summary.recipient.name,
+        subtitle: summary.recipient.phoneNumber,
+        data: TransactionModel(
+          id: "AJKLAJLAAJLK",
+          bill: BillInquiry(
+            product: BillProduct(
+              name: "Kirim Saldo",
+              description: "Kirim saldo ke ${summary.recipient.phoneNumber}",
+              imageAsset: "profile_default.png", 
+              category: BillType.sendBalance,
+            ), 
+            details: SendBalanceDetail(
+              phoneNumber: summary.recipient.phoneNumber, 
+              customerAgent: "192810", 
+              customerName: summary.recipient.name,
+              amount: summary.amount
+            ), 
+            payment: PaymentSummary(
+              amount: summary.amount,
+              fee: summary.fee,
+              discount: 0,
+            )
           ), 
-          detail: DetailBillModel(
-            information: [],
-            price: summary.amount.toDouble(),
-            fee: summary.fee.toDouble(),
-            discount: 0,
-          ), 
-          transactionId: "AJKLAJLAAJLK", 
-          dateTime: DateTime.now(), 
-          invoiceType: InvoiceType.sendBalance
+          date: DateTime.now(), 
+          status: TransactionStatus.success
         )
       )
     );
@@ -55,25 +64,26 @@ class SendConfirmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailBillScreen(
-      product: BillProduct(
-        name: "Kirim Saldo",
-        description: summary.recipient.name,
-        imageAsset: "profile_default.png",
-      ),
-      detail: DetailBillModel(
-        information: [
-          BillInformation(
-            key: "Nomor Handphone",
-            value: (summary.recipient.phoneNumber),
-          ),
-          BillInformation(
-            key: "Nominal Kirim",
-            value: formatRupiah(summary.amount),
-          ),
-        ],
-        price: summary.amount.toDouble(),
-        fee: summary.fee.toDouble(),
-        discount: 0,
+      title: "Kirim Saldo",
+      subtitle: summary.recipient.name,
+      bill: BillInquiry(
+        product: BillProduct(
+          name: "Kirim Saldo",
+          description: "Kirim saldo ke ${summary.recipient.phoneNumber}",
+          imageAsset: "profile_default.png", 
+          category: BillType.sendBalance,
+        ), 
+        details: SendBalanceDetail(
+          phoneNumber: summary.recipient.phoneNumber, 
+          customerAgent: "192810", 
+          customerName: summary.recipient.name,
+          amount: summary.amount
+        ), 
+        payment: PaymentSummary(
+          amount: summary.amount,
+          fee: summary.fee,
+          discount: 0,
+        )
       ),
       onPay: (context) => _pay(context),
     );

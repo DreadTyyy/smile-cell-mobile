@@ -1,18 +1,20 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:smile_cell/data/models/detail_bill_model.dart';
-import 'package:smile_cell/helpers/formatCurrency.dart';
+import 'package:smile_cell/helpers/format_currency.dart';
 
 class DetailBillScreen extends StatefulWidget {
   const DetailBillScreen({
     super.key,
-    required this.detail,
-    required this.product,
+    required this.title,
+    required this.subtitle,
+    required this.bill,
     required this.onPay,
   });
 
-  final DetailBillModel detail;
-  final BillProduct product;
+  final String title;
+  final String subtitle;
+  final BillInquiry bill;
   final Function(BuildContext context) onPay;
 
   @override
@@ -25,15 +27,15 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
     final detailPrices = [
       {
         "key": "Nominal",
-        "value": formatIdr(widget.detail.price)
+        "value": formatIdr(widget.bill.payment.amount)
       },
       {
         "key": "Biaya Admin",
-        "value": widget.detail.fee == 0 ? "Gratis" : formatIdr(widget.detail.fee)
+        "value": widget.bill.payment.fee == 0 ? "Gratis" : formatIdr(widget.bill.payment.fee)
       },
       {
         "key": "Diskon",
-        "value": widget.detail.discount == 0 ? 0 : formatIdr(widget.detail.discount)
+        "value": widget.bill.payment.discount == 0 ? 0 : formatIdr(widget.bill.payment.discount)
       },
     ];
     return Scaffold(
@@ -101,7 +103,7 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
                                   width: 32.0,
                                   height: 32.0,
                                   child: Image.asset(
-                                    "assets/${widget.product.imageAsset}",
+                                    widget.bill.product.imagePath,
                                     fit: BoxFit.contain,
                                     height: 32.0,
                                     width: 32.0,
@@ -111,14 +113,14 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Tagihan ${widget.product.name}",
+                                      widget.title,
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600
                                       ),
                                     ),
                                     Text(
-                                      widget.product.description,
+                                      widget.subtitle,
                                       style: TextStyle(
                                         fontSize: 14.0,
                                         color: Colors.black.withValues(alpha: 0.6)
@@ -136,7 +138,7 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               spacing: 10.0,
-                              children: widget.detail.information.map((item) {
+                              children: widget.bill.details.informations.map((item) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -208,7 +210,7 @@ class _DetailBillScreenState extends State<DetailBillScreen> {
                                       ),
                                     ),
                                     Text(
-                                      formatIdr(widget.detail.price + widget.detail.fee - widget.detail.discount),
+                                      formatIdr(widget.bill.payment.totalAmount),
                                       style: TextStyle(
                                         fontSize: 24.0,
                                         fontWeight: FontWeight.w600,

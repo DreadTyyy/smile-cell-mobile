@@ -1,3 +1,5 @@
+// TODO: Penyesuaian model biller dengan model transaction/inquiry
+
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';

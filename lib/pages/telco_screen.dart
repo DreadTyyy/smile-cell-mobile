@@ -6,10 +6,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:smile_cell/component/pin_sheet/pin_bottom_sheet.dart';
 import 'package:smile_cell/component/tab_bar_section.dart';
+import 'package:smile_cell/config/telco_config.dart';
 import 'package:smile_cell/data/models/detail_bill_model.dart';
-import 'package:smile_cell/data/models/invoice_model.dart';
 import 'package:smile_cell/data/models/telco_model.dart';
-import 'package:smile_cell/helpers/formatCurrency.dart';
+import 'package:smile_cell/data/models/transaction_model.dart';
+import 'package:smile_cell/helpers/format_currency.dart';
 import 'package:smile_cell/helpers/navigation.dart';
 import 'package:smile_cell/pages/detail_bill_screen.dart';
 import 'package:smile_cell/pages/detail_receipt_screen.dart';
@@ -77,7 +78,8 @@ class _TelcoScreenState extends State<TelcoScreen>
     final product = BillProduct(
       name: type == TelcoType.pulsa ? "Pulsa" : "Paket Data", 
       description: provider.name, 
-      imageAsset: provider.logoAsset
+      imageAsset: provider.logoAsset,
+      category: type == TelcoType.pulsa ? BillType.phoneCredit : BillType.package
     );
 
     if (type == TelcoType.pulsa) {
@@ -97,8 +99,7 @@ class _TelcoScreenState extends State<TelcoScreen>
 
   Future<void> _handlePaymentTelcoFlow(
     BuildContext context, 
-    BillProduct product,
-    DetailBillModel detail,
+    BillInquiry bill
   ) async {
     final isPaymentSucces = await showPinBottomSheet(context, _handlePayPaketData);
     if (isPaymentSucces != true) return;
@@ -107,59 +108,75 @@ class _TelcoScreenState extends State<TelcoScreen>
     pushSlide(
       context, 
       DetailReceiptScreen(
-        data: InvoiceModel(
-          product: BillProduct(
-            // dari onsubmitbill provider ada di desc dan type ada di name
-            name: product.description, 
-            description: product.name,
-            imageAsset: product.imageAsset,
-          ), 
-          detail: detail, 
-          transactionId: "AJKLAJLAAJLK", 
-          dateTime: DateTime.now(), 
-          invoiceType: InvoiceType.package
-        )
+        title: bill.product.description,
+        subtitle: bill.product.name,
+        data: TransactionModel(
+          id: "AJKLAJLAAJLK",
+          bill: BillInquiry(
+            product: BillProduct(
+              name: bill.product.name, 
+              description: bill.product.description,
+              imageAsset: bill.product.imageAsset, 
+              category: bill.product.category,
+            ),
+            details: bill.details, 
+            payment: bill.payment, 
+          ),
+          date: DateTime.now(), 
+          status: TransactionStatus.success
+        ) 
       )
     );
   } 
 
-  void _submitPaketData(BillProduct product, TelcoModel selectProduct) {
-    final detail = DetailBillModel(
-      information: [
-        BillInformation(key: "Nomor Handphone", value: "0852 3243 9337"),
-        BillInformation(key: "Nominal Kuota", value: "${selectProduct.nominal.toInt()} GB"),
-        BillInformation(key: "Masa Aktif", value: "30 hari"),
-      ], 
-      price: selectProduct.price, 
-      fee: 0, 
-      discount: selectProduct.priceDiscount ?? 0
+  void _submitPaketData(BillProduct product, TelcoModel selectedProduct) {
+    final bill = BillInquiry(
+      product: product,
+      details: PackageDetail(
+        phoneNumber: _phoneNumber,
+        nominal: selectedProduct.nominal.toInt(),
+        days: 30, 
+        provider: selectedProduct.provider.id
+      ), 
+      payment: PaymentSummary(
+        amount: selectedProduct.amount,
+        fee: 0,
+        discount: selectedProduct.amountDiscount ?? 0
+      )
+    );
+    
+    pushSlide(
+      context, 
+      DetailBillScreen(
+        title: "Tagihan Paket Data",
+        subtitle: selectedProduct.provider.name,
+        bill: bill,
+        onPay: (context) => _handlePaymentTelcoFlow(context, bill)
+      )
+    );
+  }
+  void _submitPulsa(BillProduct product, TelcoModel selectedProduct) {
+    final bill = BillInquiry(
+      product: product,
+      details: PhoneCreditDetail(
+        phoneNumber: _phoneNumber,
+        nominal: selectedProduct.nominal.toInt(),
+        provider: selectedProduct.provider.id
+      ), 
+      payment: PaymentSummary(
+        amount: selectedProduct.amount,
+        fee: 0,
+        discount: selectedProduct.amountDiscount ?? 0
+      )
     );
 
     pushSlide(
       context, 
       DetailBillScreen(
-        detail: detail,
-        product: product,
-        onPay: (context) => _handlePaymentTelcoFlow(context, product, detail)
-      )
-    );
-  }
-  void _submitPulsa(BillProduct product, TelcoModel selectProduct) {
-    final detail = DetailBillModel(
-      information: [
-        BillInformation(key: "Nomor Handphone", value: "0852 3243 9337"),
-        BillInformation(key: "Nominal Pulsa", value: formatIdr(selectProduct.nominal)),
-      ], 
-      price: selectProduct.price, 
-      fee: 0, 
-      discount: selectProduct.priceDiscount ?? 0
-    );
-    pushSlide(
-      context, 
-      DetailBillScreen(
-        detail: detail,
-        product: product,
-         onPay: (context) => _handlePaymentTelcoFlow(context, product, detail)
+        title: "Tagihan Pulsa",
+        subtitle: selectedProduct.provider.name,
+        bill: bill,
+        onPay: (context) => _handlePaymentTelcoFlow(context, bill)
       )
     );
   }
@@ -190,24 +207,24 @@ class _TelcoScreenState extends State<TelcoScreen>
         id: '1', 
         type: TelcoType.pulsa, 
         nominal: 15000, 
-        price: 16000, 
-        provider: 'Telkomsel', 
+        amount: 16000, 
+        provider: telkomselProvider, 
         isDiscount: false
       ),
       TelcoModel(
         id: '2', 
         type: TelcoType.pulsa, 
         nominal: 20000, 
-        price: 21000, 
-        provider: 'Telkomsel', 
+        amount: 21000, 
+        provider: telkomselProvider, 
         isDiscount: true
       ),
       TelcoModel(
         id: '3', 
         type: TelcoType.pulsa, 
         nominal: 25000, 
-        price: 25000, 
-        provider: 'Telkomsel', 
+        amount: 25000, 
+        provider: telkomselProvider, 
         isDiscount: false
       ),
     ];
@@ -218,8 +235,8 @@ class _TelcoScreenState extends State<TelcoScreen>
         type: TelcoType.data, 
         description: 'Paket Seru Bulanan Internet 6 GB Selama 30 hari',
         nominal: 6, 
-        price: 55000, 
-        provider: 'Telkomsel', 
+        amount: 55000, 
+        provider: telkomselProvider,
         isDiscount: false
       ),
       TelcoModel(
@@ -227,10 +244,10 @@ class _TelcoScreenState extends State<TelcoScreen>
         type: TelcoType.data, 
         description: 'Paket Seru Bulanan Internet 6 GB Selama 30 hari',
         nominal: 6, 
-        price: 55000, 
-        provider: 'Telkomsel', 
+        amount: 55000, 
+        provider: telkomselProvider,
         isDiscount: true,
-        priceDiscount: 5000
+        amountDiscount: 5000
       ),
     ];
 
@@ -516,7 +533,7 @@ class _PulsaTile extends StatelessWidget {
                 )
               ),
               Text(
-                formatIdr(dataPulsa.price),
+                formatIdr(dataPulsa.amount),
                 style: TextStyle(
                   fontSize: 18.0,
                   fontWeight: FontWeight.w500,
@@ -531,7 +548,7 @@ class _PulsaTile extends StatelessWidget {
     );
   }
 
-  String _formatThousandRupiah(double value) {
+  String _formatThousandRupiah(int value) {
     final val = value / 1000;
 
     if (val % 1 == 0) {
@@ -647,7 +664,7 @@ class _PaketDataTile extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        formatIdr(paketData.price),
+                        formatIdr(paketData.amount),
                         style: TextStyle(
                           fontSize: 14.0,
                           fontWeight: FontWeight.w600,
