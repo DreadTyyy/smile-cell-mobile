@@ -251,7 +251,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final list = Column(
       children: [
         for (int i = 0; i < visible.length; i++) ...[
-          TransactionTile(transaction: visible[i], onTap: () {}),
+          TransactionTile(
+            transaction: visible[i],
+            onTap: () => openReceiptScreen(context, visible[i]),
+          ),
           if (i < visible.length - 1) SizedBox(height: _tileGap),
         ],
       ],

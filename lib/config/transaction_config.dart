@@ -1,7 +1,10 @@
+import "package:flutter/material.dart";
 import "package:smile_cell/config/bill_config.dart";
 import "package:smile_cell/data/models/detail_bill_model.dart";
 import "package:smile_cell/data/models/telco_model.dart";
 import "package:smile_cell/data/models/transaction_model.dart";
+import "package:smile_cell/helpers/navigation.dart";
+import "package:smile_cell/pages/detail_receipt_screen.dart";
 import "package:smile_cell/services/phone_provider_detector.dart";
 
 const _fallbackLogo = "Vector.png";
@@ -406,4 +409,23 @@ Map<String, List<TransactionModel>> groupByMonth(
 
 String formatTransactionDate(DateTime date) {
   return "${date.day} ${_monthNames[date.month - 1]} ${date.year}";
+}
+
+Future<void> openReceiptScreen(
+  BuildContext context,
+  TransactionModel transaction,
+) {
+  final details = transaction.bill.details;
+  final product = transaction.bill.product;
+
+  return pushSlide(
+    context,
+    DetailReceiptScreen(
+      title: details is SendBalanceDetail ? details.customerName : product.name,
+      subtitle: details is SendBalanceDetail
+          ? details.phoneNumber
+          : product.description,
+      data: transaction,
+    ),
+  );
 }

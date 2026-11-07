@@ -101,7 +101,12 @@ class _HistoryList extends StatelessWidget {
             ),
           ),
           for (final transaction in entry.value) ...[
-            ActivityTile(transaction: transaction, onTap: () {}),
+            ActivityTile(
+              transaction: transaction,
+              onTap: transaction.status == TransactionStatus.success
+                  ? () => openReceiptScreen(context, transaction)
+                  : () {},
+            ),
             const SizedBox(height: 10.0),
           ],
           const SizedBox(height: 10.0),
@@ -129,7 +134,10 @@ class _OngoingList extends StatelessWidget {
       itemCount: transactions.length,
       separatorBuilder: (_, __) => const SizedBox(height: 10.0),
       itemBuilder: (context, index) {
-        return ActivityTile(transaction: transactions[index], onTap: () {});
+        return ActivityTile(
+          transaction: transactions[index],
+          onTap: () => openReceiptScreen(context, transactions[index]),
+        );
       },
     );
   }
