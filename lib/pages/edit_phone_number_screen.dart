@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:smile_cell/helpers/navigation.dart';
+import 'package:smile_cell/helpers/phone_formatter.dart';
 import 'package:smile_cell/pages/otp_screen.dart';
 
 class EditPhoneNumberScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
   }
 
   void _handleSubmit() {
-    final fullPhoneNumber = "0${_controller.text}";
+    final fullPhoneNumber = formatPhoneForDatabase(_controller.text);
     pushSlide(
       context, 
       OtpScreen(
@@ -40,7 +41,7 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
   }
 
   bool get _isButtonNotDisabled => 
-    _controller.text.isNotEmpty &&
+    _controller.text.startsWith("8") &&
     _controller.text.length >= 8 &&
     _controller.text.length <= 12;
 
@@ -93,12 +94,12 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
                   validator: (value) => null,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
+                    const PhoneInputFormatter(),
                     LengthLimitingTextInputFormatter(12)
                   ],
                   style: TextStyle(fontSize: 16.0),
                   decoration: InputDecoration(
-                    hintText: "812 3456 7890",
+                    hintText: "81234567890",
                     hintStyle: TextStyle(
                       fontSize: 16.0,
                       color: Colors.black.withValues(alpha: 0.6),

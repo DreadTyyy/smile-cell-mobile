@@ -3,6 +3,7 @@
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/register_screen.dart";
 
 class LoginScreen extends StatefulWidget {
@@ -40,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool get _canNext =>
-      _phoneNumberController.text.isNotEmpty &&
+      _phoneNumberController.text.startsWith("8") &&
       _phoneNumberController.text.length >= 8 &&
       _phoneNumberController.text.length <= 12;
 
@@ -110,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _phoneNumberController,
                             keyboardType: TextInputType.phone,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
+                              const PhoneInputFormatter(),
                               LengthLimitingTextInputFormatter(12),
                             ],
                             style: TextStyle(
@@ -119,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             decoration: const InputDecoration(
                               border: InputBorder.none,
-                              hintText: "123 4567 8900",
+                              hintText: "81234567890",
                               hintStyle: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.w500,

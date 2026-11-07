@@ -6,6 +6,7 @@ import "package:flutter/services.dart";
 import "package:smile_cell/component/bottom_action_bar.dart";
 import "package:smile_cell/data/models/send_balance_model.dart";
 import "package:smile_cell/helpers/navigation.dart";
+import "package:smile_cell/helpers/phone_formatter.dart";
 import "package:smile_cell/pages/send_amount_screen.dart";
 import "package:smile_cell/services/validation/phone_number_validator.dart";
 
@@ -18,13 +19,30 @@ class SendBalanceScreen extends StatefulWidget {
 
 class _SendBalanceScreenState extends State<SendBalanceScreen> {
   final _phoneController = TextEditingController();
+  final _phoneFocusNode = FocusNode();
+  bool _isFocused = false;
   PhoneValidationError? _validationError = PhoneValidationError.empty;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _phoneFocusNode.addListener(() {
+      setState(() {
+        _isFocused = _phoneFocusNode.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
     _phoneController.dispose();
+    _phoneFocusNode.dispose();
     super.dispose();
   }
+
+  String get _phoneNumberForDatabase =>
+      formatPhoneForDatabase(_phoneController.text);
 
   bool get _canContinue => _validationError == null;
 
@@ -37,31 +55,35 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
 
   void _onPhoneChanged() {
     setState(() {
-      _validationError = PhoneNumberValidator.validate(_phoneController.text).error;
+      final phoneNumber = _phoneController.text.startsWith("8")
+          ? _phoneNumberForDatabase
+          : _phoneController.text;
+      _validationError = PhoneNumberValidator.validate(phoneNumber).error;
     });
   }
 
   void _submit() {
     // TODO: ambil data penerima dari database
     final recipient = Recipient(
-      id: _phoneController.text,
+      id: _phoneNumberForDatabase,
       name: "Pengguna Smile Cell",
-      phoneNumber: _phoneController.text,
+      phoneNumber: _phoneNumberForDatabase,
     );
 
     FocusScope.of(context).unfocus();
     pushSlide(context, SendAmountScreen(recipient: recipient));
   }
 
-  OutlineInputBorder _border(Color color) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(8.0),
-    borderSide: BorderSide(color: color, width: 1.0),
-  );
-
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     final error = Theme.of(context).colorScheme.error;
+    final errorText = _errorText;
+    final borderColor = errorText != null
+        ? error
+        : _isFocused
+            ? primary
+            : const Color(0xFFDDDDDD);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -105,50 +127,79 @@ class _SendBalanceScreenState extends State<SendBalanceScreen> {
                     ),
                   ),
                   const SizedBox(height: 8.0),
-                  TextField(
-                    controller: _phoneController,
-                    autofocus: true,
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    inputFormatters:  [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(12)
-                    ],
-                    onChanged: (_) => _onPhoneChanged(),
-                    onSubmitted: (_) {
-                      if (_canContinue) _submit();
-                    },
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "081234567890",
-                      hintStyle: TextStyle(
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black.withValues(alpha: 0.4),
+                  GestureDetector(
+                    onTap: _phoneFocusNode.requestFocus,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: borderColor, width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                      errorText: _errorText,
-                      errorStyle: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                        color: error,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "+62",
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            child: TextField(
+                              controller: _phoneController,
+                              focusNode: _phoneFocusNode,
+                              autofocus: true,
+                              keyboardType: TextInputType.phone,
+                              textInputAction: TextInputAction.next,
+                              inputFormatters: [
+                                const PhoneInputFormatter(),
+                                LengthLimitingTextInputFormatter(12),
+                              ],
+                              onChanged: (_) => _onPhoneChanged(),
+                              onSubmitted: (_) {
+                                if (_canContinue) _submit();
+                              },
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 16.0,
+                                ),
+                                hintText: "81234567890",
+                                hintStyle: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black.withValues(alpha: 0.4),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 16.0,
-                      ),
-                      enabledBorder: _border(const Color(0xFFDDDDDD)),
-                      focusedBorder: _border(primary),
-                      errorBorder: _border(error),
-                      focusedErrorBorder: _border(error),
-                      border: _border(const Color(0xFFDDDDDD)),
                     ),
                   ),
+                  if (errorText != null) ...[
+                    const SizedBox(height: 8.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        errorText,
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w500,
+                          color: error,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
